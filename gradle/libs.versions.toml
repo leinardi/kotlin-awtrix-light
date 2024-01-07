@@ -1,0 +1,44 @@
+# Sharing dependency versions between projects
+# https://docs.gradle.org/current/userguide/platforms.html
+[versions]
+detekt = "1.23.4"
+dokka = "1.9.10"
+gradle = "8.5"
+java = "17"
+kotlin = "1.9.22"
+kotlin-logging = "6.0.1"
+ktlint = "1.0.1"
+log4j = "2.22.1"
+prettier = "2.4.1"
+xmlutil = "0.84.3"
+
+[libraries]
+detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
+kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
+kotlin-test-junit5 = "org.jetbrains.kotlin:kotlin-test-junit5:1.9.10"
+kotlinx-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
+log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
+log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
+# plugins
+plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
+plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+plugin-spotless = "com.diffplug.spotless:spotless-plugin-gradle:6.22.0"
+plugin-versions = "com.github.ben-manes:gradle-versions-plugin:0.50.0"
+plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.1"
+
+[bundles]
+kotlin-logging-jvm = [
+    "kotlin-logging-jvm",
+    "log4j-api",
+    "log4j-core",
+    "log4j-slf4j2-impl",
+]
+
+[plugins]
+gradledoctor = "com.osacky.doctor:0.8.1"
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
