@@ -29,7 +29,7 @@ formatting: # KtLint
     active: true
     autoCorrect: true
     indentSize: 4
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
   BlockCommentInitialStarAlignment:
     active: true
     autoCorrect: true
@@ -49,7 +49,7 @@ formatting: # KtLint
   ContextReceiverMapping:
     active: true # Custom
     autoCorrect: true
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
     indentSize: 4
   DiscouragedCommentLocation:
     active: true # Custom
@@ -75,13 +75,13 @@ formatting: # KtLint
   FunctionReturnTypeSpacing:
     active: true
     autoCorrect: true
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
   FunctionSignature:
     active: false
     autoCorrect: true
     forceMultilineWhenParameterCountGreaterOrEqualThan: 2147483647
     functionBodyExpressionWrapping: 'default'
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
     indentSize: 4
   FunctionStartOfBodySpacing:
     active: true
@@ -111,7 +111,7 @@ formatting: # KtLint
     indentSize: 4
   MaximumLineLength:
     active: false # Custom
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
     ignoreBackTickedIdentifier: false
   ModifierListSpacing:
     active: true
@@ -191,20 +191,20 @@ formatting: # KtLint
   ParameterListWrapping:
     active: true
     autoCorrect: true
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
     indentSize: 4
   ParameterWrapping:
     active: true
     autoCorrect: true
     indentSize: 4
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
   PropertyName:
     active: false
   PropertyWrapping:
     active: true
     autoCorrect: true
     indentSize: 4
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
   SpacingAroundAngleBrackets:
     active: true
     autoCorrect: true
@@ -281,7 +281,7 @@ formatting: # KtLint
     active: false # Custom
     autoCorrect: true
     indentSize: 4
-    maxLineLength: 120
+    maxLineLength: 150 # Custom
 
 processors:
   active: true
@@ -1079,7 +1079,7 @@ style:
     maxChainedCalls: 5
   MaxLineLength:
     active: true
-    maxLineLength: 120 # Custom
+    maxLineLength: 150 # Custom
     excludePackageStatements: true
     excludeImportStatements: true
     excludeCommentStatements: false

@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package com.leinardi.kal.coroutine
 
-dependencies {
-    implementation(libs.plugin.detekt)
-    implementation(libs.plugin.kotlin)
-    implementation(libs.plugin.spotless)
-    implementation(libs.plugin.versions)
-    implementation(libs.plugin.versions.update)
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-}
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+
+data class CoroutineDispatchers(
+    val main: CoroutineDispatcher = Dispatchers.Main,
+    val default: CoroutineDispatcher = Dispatchers.Default,
+    val io: CoroutineDispatcher = Dispatchers.IO,
+    val unconfined: CoroutineDispatcher = Dispatchers.Unconfined,
+)

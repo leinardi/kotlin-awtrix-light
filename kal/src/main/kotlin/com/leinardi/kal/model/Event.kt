@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package com.leinardi.kal.model
 
-dependencies {
-    implementation(libs.plugin.detekt)
-    implementation(libs.plugin.kotlin)
-    implementation(libs.plugin.spotless)
-    implementation(libs.plugin.versions)
-    implementation(libs.plugin.versions.update)
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+sealed class Event {
+    data class SettingsAvailable(val clientId: String) : Event()
+    data class ButtonPressed(val clientId: String, val button: Button, val motionEvent: MotionEvent) : Event()
+    data class CurrentApp(val clientId: String, val app: String) : Event()
+    data class StatsReceived(val clientId: String, val stats: Stats) : Event()
 }

@@ -1,20 +1,27 @@
 # Sharing dependency versions between projects
 # https://docs.gradle.org/current/userguide/platforms.html
 [versions]
+coroutines = "1.7.3"
 detekt = "1.23.4"
-dokka = "1.9.10"
 gradle = "8.5"
 java = "17"
+kmqtt = "0.4.3"
 kotlin = "1.9.22"
 kotlin-logging = "6.0.1"
-ktlint = "1.0.1"
+kotlin-result = "1.1.18"
 log4j = "2.22.1"
-prettier = "2.4.1"
-xmlutil = "0.84.3"
 
 [libraries]
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+kmqtt-broker-jvm = { module = "io.github.davidepianca98:kmqtt-broker-jvm", version.ref = "kmqtt" }
+kmqtt-common-jvm = { module = "io.github.davidepianca98:kmqtt-common-jvm", version.ref = "kmqtt" }
+kodein = "org.kodein.di:kodein-di:7.19.0"
 kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
+kotlin-result-coroutines = { module = "com.michael-bull.kotlin-result:kotlin-result-coroutines", version.ref = "kotlin-result" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-junit5 = "org.jetbrains.kotlin:kotlin-test-junit5:1.9.10"
@@ -31,6 +38,10 @@ plugin-versions = "com.github.ben-manes:gradle-versions-plugin:0.50.0"
 plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.1"
 
 [bundles]
+kmqtt-jvm = [
+    "kmqtt-broker-jvm",
+    "kmqtt-common-jvm",
+]
 kotlin-logging-jvm = [
     "kotlin-logging-jvm",
     "log4j-api",

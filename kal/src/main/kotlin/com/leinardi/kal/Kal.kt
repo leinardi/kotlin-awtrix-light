@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package com.leinardi.kal
 
-dependencies {
-    implementation(libs.plugin.detekt)
-    implementation(libs.plugin.kotlin)
-    implementation(libs.plugin.spotless)
-    implementation(libs.plugin.versions)
-    implementation(libs.plugin.versions.update)
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+import com.leinardi.kal.log.logger
+import com.leinardi.kal.mqtt.MqttServer
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
+
+class Kal(override val di: DI) : DIAware {
+    private val mqttServer: MqttServer by di.instance()
+    fun onCreate() {
+        logger.debug { "Kal onCreate" }
+        mqttServer.start()
+    }
+
+    fun onCleared() {
+        logger.debug { "Kal onCleared" }
+        mqttServer.stop()
+    }
 }

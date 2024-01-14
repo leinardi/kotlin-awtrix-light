@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package com.leinardi.kal.mqtt
 
-dependencies {
-    implementation(libs.plugin.detekt)
-    implementation(libs.plugin.kotlin)
-    implementation(libs.plugin.spotless)
-    implementation(libs.plugin.versions)
-    implementation(libs.plugin.versions.update)
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+import com.leinardi.kal.ext.asString
+import mqtt.broker.interfaces.Authentication
+
+@OptIn(ExperimentalUnsignedTypes::class)
+class MqttAuthenticator : Authentication {
+    override fun authenticate(clientId: String, username: String?, password: UByteArray?): Boolean =
+        username == "user" && password?.asString() == "pass"
 }

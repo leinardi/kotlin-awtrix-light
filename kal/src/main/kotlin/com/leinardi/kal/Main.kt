@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package com.leinardi.kal
 
-dependencies {
-    implementation(libs.plugin.detekt)
-    implementation(libs.plugin.kotlin)
-    implementation(libs.plugin.spotless)
-    implementation(libs.plugin.versions)
-    implementation(libs.plugin.versions.update)
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+import com.leinardi.kal.di.build
+import com.leinardi.kal.log.configureLog4j
+import io.github.oshai.kotlinlogging.Level
+import kotlinx.coroutines.runBlocking
+import org.kodein.di.DI
+
+fun main() {
+    runBlocking {
+        configureLog4j(Level.DEBUG)
+        val kodein = DI { build() }
+        Kal(kodein).run {
+            Runtime.getRuntime().addShutdownHook(Thread { onCleared() })
+            onCreate()
+        }
+    }
 }

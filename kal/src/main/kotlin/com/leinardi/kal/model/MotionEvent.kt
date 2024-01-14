@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package com.leinardi.kal.model
 
-dependencies {
-    implementation(libs.plugin.detekt)
-    implementation(libs.plugin.kotlin)
-    implementation(libs.plugin.spotless)
-    implementation(libs.plugin.versions)
-    implementation(libs.plugin.versions.update)
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+enum class MotionEvent(val payloadValue: Int) {
+    ACTION_DOWN(1),
+    ACTION_UP(0);
+
+    companion object {
+        fun fromPayloadValue(value: Int): MotionEvent = entries.first { it.payloadValue == value }
+    }
 }

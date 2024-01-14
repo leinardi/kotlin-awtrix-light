@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-plugins {
-    `kotlin-dsl`
-}
+package com.leinardi.kal.model
 
-dependencies {
-    implementation(libs.plugin.detekt)
-    implementation(libs.plugin.kotlin)
-    implementation(libs.plugin.spotless)
-    implementation(libs.plugin.versions)
-    implementation(libs.plugin.versions.update)
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+enum class Button(val topicValue: String) {
+    LEFT("buttonLeft"),
+    SELECT("buttonSelect"),
+    RIGHT("buttonRight");
+
+    companion object {
+        fun fromTopicValue(value: String): Button = entries.first { it.topicValue == value }
+    }
 }
