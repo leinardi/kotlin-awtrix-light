@@ -55,4 +55,22 @@ tasks {
         options.compilerArgs.add("-Xlint:deprecation")
         options.compilerArgs.add("-Xlint:unchecked")
     }
+
+    val dist = register<Jar>("dist") {
+        mustRunAfter(named("processResources"))
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        manifest {
+            attributes["Implementation-Title"] = "Kotlin Awtrix Light"
+            attributes["Implementation-Version"] = version
+            attributes["Main-Class"] = application.mainClass.get()
+        }
+        from(files(sourceSets.main.get().output.resourcesDir))
+        from(files(sourceSets.main.get().output.classesDirs))
+        from(configurations.compileClasspath.get().resolve().map { if (it.isDirectory) it else zipTree(it) })
+        archiveFileName.set("${archiveBaseName.get()}-fat.jar")
+    }
+
+    named("build") {
+        dependsOn(dist)
+    }
 }
