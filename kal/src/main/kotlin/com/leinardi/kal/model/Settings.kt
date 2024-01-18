@@ -28,21 +28,21 @@ data class Settings(
     @SerialName("TSPEED")
     val transitionSpeed: Int? = null,
     @SerialName("TCOL")
-    val transitionColor: String? = null,
+    val transitionColor: Color? = null,
     @SerialName("TMODE")
     val timeMode: TimeMode? = null,
     @SerialName("CHCOL")
-    val calendarHeaderColor: String? = null,
+    val calendarHeaderColor: Color? = null,
     @SerialName("CBCOL")
-    val calendarBackgroundColor: String? = null,
+    val calendarBackgroundColor: Color? = null,
     @SerialName("CTCOL")
-    val calendarTextColor: String? = null,
+    val calendarTextColor: Color? = null,
     @SerialName("WD")
     val weekdayDisplay: Boolean? = null,
     @SerialName("WDCA")
-    val weekdayActiveColor: String? = null,
+    val weekdayActiveColor: Color? = null,
     @SerialName("WDCI")
-    val weekdayInactiveColor: String? = null,
+    val weekdayInactiveColor: Color? = null,
     @SerialName("BRI")
     val brightness: Int? = null,
     @SerialName("ABRI")
@@ -64,15 +64,15 @@ data class Settings(
     @SerialName("UPPERCASE")
     val uppercase: Boolean? = null,
     @SerialName("TIME_COL")
-    val timeColor: String? = null,
+    val timeColor: Color? = null,
     @SerialName("DATE_COL")
-    val dateColor: String? = null,
+    val dateColor: Color? = null,
     @SerialName("TEMP_COL")
-    val temperatureColor: String? = null,
+    val temperatureColor: Color? = null,
     @SerialName("HUM_COL")
-    val humidityColor: String? = null,
+    val humidityColor: Color? = null,
     @SerialName("BAT_COL")
-    val batteryColor: String? = null,
+    val batteryColor: Color? = null,
     @SerialName("SSPEED")
     val scrollSpeed: Int? = null,
     @SerialName("TIM")

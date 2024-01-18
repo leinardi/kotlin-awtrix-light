@@ -46,7 +46,7 @@ sealed class Draw {
         val x: Int,
         val y: Int,
         @SerialName("cl")
-        val color: String,
+        val color: Color,
     ) : Draw()
 
     @SerialName("dl")
@@ -56,7 +56,7 @@ sealed class Draw {
         val x1: Int,
         val y1: Int,
         @SerialName("cl")
-        val color: String,
+        val color: Color,
     ) : Draw()
 
     @SerialName("dr")
@@ -68,7 +68,7 @@ sealed class Draw {
         @SerialName("h")
         val height: Int,
         @SerialName("cl")
-        val color: String,
+        val color: Color,
     ) : Draw()
 
     @SerialName("df")
@@ -80,7 +80,7 @@ sealed class Draw {
         @SerialName("h")
         val height: Int,
         @SerialName("cl")
-        val color: String,
+        val color: Color,
     ) : Draw()
 
     @SerialName("dc")
@@ -90,7 +90,7 @@ sealed class Draw {
         @SerialName("r")
         val radius: Int,
         @SerialName("cl")
-        val color: String,
+        val color: Color,
     ) : Draw()
 
     @SerialName("dfc")
@@ -100,7 +100,7 @@ sealed class Draw {
         @SerialName("r")
         val radius: Int,
         @SerialName("cl")
-        val color: String,
+        val color: Color,
     ) : Draw()
 
     @SerialName("dt")
@@ -110,7 +110,7 @@ sealed class Draw {
         @SerialName("t")
         val text: String,
         @SerialName("cl")
-        val color: String,
+        val color: Color,
     ) : Draw()
 }
 
@@ -137,7 +137,7 @@ object DrawSerializer : KSerializer<Draw> {
                     add(JsonPrimitive(value.x))
                     add(JsonPrimitive(value.y))
                     add(JsonPrimitive(value.radius))
-                    add(JsonPrimitive(value.color))
+                    add(JsonPrimitive(value.color.toString()))
                 },
             )
 
@@ -147,7 +147,7 @@ object DrawSerializer : KSerializer<Draw> {
                     add(JsonPrimitive(value.x))
                     add(JsonPrimitive(value.y))
                     add(JsonPrimitive(value.radius))
-                    add(JsonPrimitive(value.color))
+                    add(JsonPrimitive(value.color.toString()))
                 },
             )
 
@@ -158,7 +158,7 @@ object DrawSerializer : KSerializer<Draw> {
                     add(JsonPrimitive(value.y))
                     add(JsonPrimitive(value.width))
                     add(JsonPrimitive(value.height))
-                    add(JsonPrimitive(value.color))
+                    add(JsonPrimitive(value.color.toString()))
                 },
             )
 
@@ -169,7 +169,7 @@ object DrawSerializer : KSerializer<Draw> {
                     add(JsonPrimitive(value.y0))
                     add(JsonPrimitive(value.x1))
                     add(JsonPrimitive(value.y1))
-                    add(JsonPrimitive(value.color))
+                    add(JsonPrimitive(value.color.toString()))
                 },
             )
 
@@ -178,7 +178,7 @@ object DrawSerializer : KSerializer<Draw> {
                 element = buildJsonArray {
                     add(JsonPrimitive(value.x))
                     add(JsonPrimitive(value.y))
-                    add(JsonPrimitive(value.color))
+                    add(JsonPrimitive(value.color.toString()))
                 },
             )
 
@@ -189,7 +189,7 @@ object DrawSerializer : KSerializer<Draw> {
                     add(JsonPrimitive(value.y))
                     add(JsonPrimitive(value.width))
                     add(JsonPrimitive(value.height))
-                    add(JsonPrimitive(value.color))
+                    add(JsonPrimitive(value.color.toString()))
                 },
             )
 
@@ -199,7 +199,7 @@ object DrawSerializer : KSerializer<Draw> {
                     add(JsonPrimitive(value.x))
                     add(JsonPrimitive(value.y))
                     add(JsonPrimitive(value.text))
-                    add(JsonPrimitive(value.color))
+                    add(JsonPrimitive(value.color.toString()))
                 },
             )
         }
@@ -213,14 +213,14 @@ object DrawSerializer : KSerializer<Draw> {
                 x = value[0].jsonPrimitive.int,
                 y = value[1].jsonPrimitive.int,
                 radius = value[2].jsonPrimitive.int,
-                color = value[3].jsonPrimitive.content,
+                color = Color.parseColor(value[3].jsonPrimitive.content),
             )
 
             Draw.FilledCircle::class.findAnnotation<SerialName>()?.value ?: checkNotNull(Draw.FilledCircle::class.simpleName) -> Draw.FilledCircle(
                 x = value[0].jsonPrimitive.int,
                 y = value[1].jsonPrimitive.int,
                 radius = value[2].jsonPrimitive.int,
-                color = value[3].jsonPrimitive.content,
+                color = Color.parseColor(value[3].jsonPrimitive.content),
             )
 
             Draw.FilledRectangle::class.findAnnotation<SerialName>()?.value ?: checkNotNull(Draw.FilledRectangle::class.simpleName) ->
@@ -229,7 +229,7 @@ object DrawSerializer : KSerializer<Draw> {
                     y = value[1].jsonPrimitive.int,
                     width = value[2].jsonPrimitive.int,
                     height = value[3].jsonPrimitive.int,
-                    color = value[4].jsonPrimitive.content,
+                    color = Color.parseColor(value[4].jsonPrimitive.content),
                 )
 
             Draw.Line::class.findAnnotation<SerialName>()?.value ?: checkNotNull(Draw.Line::class.simpleName) -> Draw.Line(
@@ -237,13 +237,13 @@ object DrawSerializer : KSerializer<Draw> {
                 y0 = value[1].jsonPrimitive.int,
                 x1 = value[2].jsonPrimitive.int,
                 y1 = value[3].jsonPrimitive.int,
-                color = value[4].jsonPrimitive.content,
+                color = Color.parseColor(value[4].jsonPrimitive.content),
             )
 
             Draw.Pixel::class.findAnnotation<SerialName>()?.value ?: checkNotNull(Draw.Pixel::class.simpleName) -> Draw.Pixel(
                 x = value[0].jsonPrimitive.int,
                 y = value[1].jsonPrimitive.int,
-                color = value[2].jsonPrimitive.content,
+                color = Color.parseColor(value[2].jsonPrimitive.content),
             )
 
             Draw.Rectangle::class.findAnnotation<SerialName>()?.value ?: checkNotNull(Draw.Rectangle::class.simpleName) -> Draw.Rectangle(
@@ -251,14 +251,14 @@ object DrawSerializer : KSerializer<Draw> {
                 y = value[1].jsonPrimitive.int,
                 width = value[2].jsonPrimitive.int,
                 height = value[3].jsonPrimitive.int,
-                color = value[4].jsonPrimitive.content,
+                color = Color.parseColor(value[4].jsonPrimitive.content),
             )
 
             Draw.Text::class.findAnnotation<SerialName>()?.value ?: checkNotNull(Draw.Text::class.simpleName) -> Draw.Text(
                 x = value[0].jsonPrimitive.int,
                 y = value[1].jsonPrimitive.int,
                 text = value[2].jsonPrimitive.content,
-                color = value[3].jsonPrimitive.content,
+                color = Color.parseColor(value[3].jsonPrimitive.content),
             )
 
             else -> error("Invalid JSON structure for Draw")

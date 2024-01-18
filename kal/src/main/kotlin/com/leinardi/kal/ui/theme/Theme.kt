@@ -14,12 +14,23 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.model
+package com.leinardi.kal.ui.theme
 
-sealed class Event {
-    data class ButtonPressed(val clientId: String, val button: Button, val motionEvent: MotionEvent) : Event()
-    data class CurrentApp(val clientId: String, val app: String) : Event()
-    data class DayNightChanged(val isNight: Boolean) : Event()
-    data class SettingsAvailable(val clientId: String) : Event()
-    data class StatsReceived(val clientId: String, val stats: Stats) : Event()
+import com.leinardi.kal.model.Color
+
+object Theme {
+    object Day : DayNightTheme {
+        override val calendarAccent = Color(0x5A55F7)
+        override val contentColor = Color(0xFFFFFF)
+    }
+
+    object Night : DayNightTheme {
+        override val calendarAccent = Color(0x5A55F7)
+        override val contentColor = Color(0x252525)
+    }
+
+    private interface DayNightTheme {
+        val calendarAccent: Color
+        val contentColor: Color
+    }
 }

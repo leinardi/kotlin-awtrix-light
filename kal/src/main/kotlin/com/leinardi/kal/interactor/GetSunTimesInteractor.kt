@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.model
+package com.leinardi.kal.interactor
 
-sealed class Event {
-    data class ButtonPressed(val clientId: String, val button: Button, val motionEvent: MotionEvent) : Event()
-    data class CurrentApp(val clientId: String, val app: String) : Event()
-    data class DayNightChanged(val isNight: Boolean) : Event()
-    data class SettingsAvailable(val clientId: String) : Event()
-    data class StatsReceived(val clientId: String, val stats: Stats) : Event()
+import com.leinardi.kal.scheduler.DayNightScheduler
+import org.shredzone.commons.suncalc.SunTimes
+import java.time.ZonedDateTime
+
+class GetSunTimesInteractor {
+    operator fun invoke(time: ZonedDateTime): SunTimes = SunTimes.compute()
+        .on(time)
+        .at(DayNightScheduler.MY_LOCATION)
+        .twilight(SunTimes.Twilight.BLUE_HOUR)
+        .fullCycle()
+        .execute()
 }

@@ -18,13 +18,10 @@ package com.leinardi.kal.event
 
 import com.leinardi.kal.awtrix.ClientStateManager
 import com.leinardi.kal.coroutine.CoroutineDispatchers
+import com.leinardi.kal.interactor.GetSettingsInteractor
 import com.leinardi.kal.log.logger
-import com.leinardi.kal.model.Button
 import com.leinardi.kal.model.Event
-import com.leinardi.kal.model.MotionEvent
 import com.leinardi.kal.model.Publishable
-import com.leinardi.kal.model.Settings
-import com.leinardi.kal.model.Sleep
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
@@ -33,6 +30,7 @@ import kotlinx.coroutines.launch
 class EventHandler(
     coroutineDispatchers: CoroutineDispatchers,
     private val clientStateManager: ClientStateManager,
+    private val getSettingsInteractor: GetSettingsInteractor,
     private val publishableChannel: Channel<Publishable>
 ) {
     private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
@@ -42,32 +40,26 @@ class EventHandler(
         coroutineScope.launch {
             for (event in channel) {
                 when (event) {
-                    is Event.ButtonPressed -> {
-                        logger.debug { "Event Received: $event" }
-                        if (event.button == Button.SELECT && event.motionEvent == MotionEvent.ACTION_UP) {
-                            publishableChannel.trySend(
-                                Publishable.Sleep(event.clientId, Sleep(5)),
-                            )
-                        }
-                    }
-
-                    is Event.SettingsAvailable -> publishableChannel.trySend(
-                        Publishable.Settings(
-                            clientId = event.clientId,
-                            payload = Settings(
-                                calendarHeaderColor = "#3E6BD1",
-                                calendarBackgroundColor = "#8B8B8B",
-                                weekdayActiveColor = "#3E6BD1",
-                                weekdayInactiveColor = "#8B8B8B",
-                            ),
-                        ),
-                    )
-
+                    is Event.ButtonPressed -> logger.debug { "Event Received: $event" }
+                    is Event.SettingsAvailable -> handleSettingsIsAvailable(event)
+                    is Event.DayNightChanged -> logger.debug { "DayNight: night = ${event.isNight}" }
                     is Event.CurrentApp -> clientStateManager.currentApp[event.clientId] = event.app
-                    is Event.StatsReceived -> clientStateManager.lastReceivedStats[event.clientId] = event.stats
+                    is Event.StatsReceived -> {
+                        clientStateManager.lastReceivedStats[event.clientId] = event.stats
+                        logger.debug { "Battery = ${event.stats.bat} (raw=${event.stats.batRaw})" }
+                    }
                 }
             }
         }
+    }
+
+    private fun handleSettingsIsAvailable(event: Event.SettingsAvailable) {
+        publishableChannel.trySend(
+            Publishable.Settings(
+                clientId = event.clientId,
+                payload = getSettingsInteractor(),
+            ),
+        )
     }
 
     fun sendEvent(event: Event) {

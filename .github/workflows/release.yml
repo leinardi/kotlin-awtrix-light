@@ -1,0 +1,93 @@
+name: Release KAL
+
+on:
+  workflow_dispatch:
+    inputs:
+      semver:
+        description: 'Release Semantic Versioning (e.g. 4.15.2)'
+        required: true
+
+jobs:
+  build-release:
+    name: Build release
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      TERM: dumb
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create release tag
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "refs/tags/${{ github.event.inputs.semver }}",
+              sha: context.sha
+            })
+
+      - name: Workaround to fetch the tag # Is there a better way to do it?
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 17.0.7
+
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+
+      - name: Validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      ## This is needed by secrets-gradle-plugin
+      - name: Create Local Properties File
+        run: touch local.properties
+
+      ## Actual task
+      - name: Build
+        uses: gradle/gradle-build-action@v2
+        env:
+          ORG_GRADLE_PROJECT_RELEASE_KEYSTORE_PWD: ${{ secrets.RELEASE_KEYSTORE_PWD }}
+        with:
+          arguments: build -PkalVersion=${{ github.event.inputs.semver }}
+
+      - name: Upload build outputs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-outputs
+          path: kal/build/libs/kal-fat-${{ github.event.inputs.semver }}.jar
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          tag_name: ${{ github.event.inputs.semver }}
+          fail_on_unmatched_files: true
+          files: |
+            kal/build/libs/kal-fat-${{ github.event.inputs.semver }}.jar
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete release tag
+        if: ${{ failure() || cancelled() }}
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            github.rest.git.deleteRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: "tags/${{ github.event.inputs.semver }}"
+            })

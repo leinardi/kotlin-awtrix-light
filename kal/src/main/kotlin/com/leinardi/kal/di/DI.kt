@@ -19,10 +19,14 @@ package com.leinardi.kal.di
 import com.leinardi.kal.awtrix.ClientStateManager
 import com.leinardi.kal.coroutine.CoroutineDispatchers
 import com.leinardi.kal.event.EventHandler
+import com.leinardi.kal.interactor.GetSettingsInteractor
+import com.leinardi.kal.interactor.GetSunTimesInteractor
+import com.leinardi.kal.interactor.IsNightInteractor
 import com.leinardi.kal.model.Publishable
 import com.leinardi.kal.mqtt.MqttAuthenticator
 import com.leinardi.kal.mqtt.MqttPacketHandler
 import com.leinardi.kal.mqtt.MqttServer
+import com.leinardi.kal.scheduler.DayNightScheduler
 import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -43,7 +47,11 @@ fun DI.MainBuilder.build() {
     bindProvider { CoroutineDispatchers() }
     bindSingleton { Channel<Publishable>(Channel.UNLIMITED) }
     bindSingleton { ClientStateManager() }
-    bindSingleton { EventHandler(instance(), instance(), instance()) }
+    bindSingleton { DayNightScheduler(instance(), instance()) }
+    bindSingleton { EventHandler(instance(), instance(), instance(), instance()) }
+    bindSingleton { GetSettingsInteractor(instance()) }
+    bindSingleton { GetSunTimesInteractor() }
+    bindSingleton { IsNightInteractor(instance()) }
     bindSingleton { MqttAuthenticator() }
     bindSingleton { MqttPacketHandler(instance(), instance()) }
     bindSingleton { MqttServer(di, instance(), instance(), instance(), instance(), instance()) }

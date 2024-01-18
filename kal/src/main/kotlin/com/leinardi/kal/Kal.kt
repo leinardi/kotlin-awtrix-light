@@ -16,16 +16,24 @@
 
 package com.leinardi.kal
 
+import com.leinardi.kal.coroutine.CoroutineDispatchers
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.mqtt.MqttServer
+import com.leinardi.kal.scheduler.DayNightScheduler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
 
 class Kal(override val di: DI) : DIAware {
+    private val coroutineDispatchers: CoroutineDispatchers by di.instance()
+    private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
+    private val dayNightScheduler: DayNightScheduler by di.instance()
     private val mqttServer: MqttServer by di.instance()
     fun onCreate() {
         logger.debug { "Kal onCreate" }
+        coroutineScope.launch { dayNightScheduler.start(this) }
         mqttServer.start()
     }
 

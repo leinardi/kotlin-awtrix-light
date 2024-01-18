@@ -29,6 +29,12 @@ application {
     mainClass.set("com.leinardi.kal.MainKt")
 }
 
+val kalVersion: String? by project
+
+if (kalVersion != null) {
+    version = checkNotNull(kalVersion)
+}
+
 dependencies {
     implementation(libs.bundles.kmqtt.jvm)
     implementation(libs.bundles.kotlin.logging.jvm)
@@ -38,6 +44,7 @@ dependencies {
     implementation(libs.kotlin.result)
     implementation(libs.kotlin.result.coroutines)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.suncalc)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.kotlin.test.junit5)
 }
@@ -62,12 +69,13 @@ tasks {
         manifest {
             attributes["Implementation-Title"] = "Kotlin Awtrix Light"
             attributes["Implementation-Version"] = version
+            attributes["Build-Jdk"] = System.getProperty("java.version")
             attributes["Main-Class"] = application.mainClass.get()
         }
         from(files(sourceSets.main.get().output.resourcesDir))
         from(files(sourceSets.main.get().output.classesDirs))
         from(configurations.compileClasspath.get().resolve().map { if (it.isDirectory) it else zipTree(it) })
-        archiveFileName.set("${archiveBaseName.get()}-fat.jar")
+        archiveFileName.set("${archiveBaseName.get()}-fat-$version.jar")
     }
 
     named("build") {
