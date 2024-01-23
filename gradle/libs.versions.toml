@@ -5,19 +5,21 @@ coroutines = "1.7.3"
 detekt = "1.23.4"
 gradle = "8.5"
 java = "17"
-kmqtt = "0.4.3"
+kmqtt = "0.4.4"
 kotlin = "1.9.22"
-kotlin-logging = "6.0.1"
+kotlin-logging = "6.0.3"
 kotlin-result = "1.1.18"
 log4j = "2.22.1"
 
 [libraries]
+clikt = "com.github.ajalt.clikt:clikt:4.2.2"
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+jna-platform = "net.java.dev.jna:jna-platform:5.14.0"
 kmqtt-broker-jvm = { module = "io.github.davidepianca98:kmqtt-broker-jvm", version.ref = "kmqtt" }
 kmqtt-common-jvm = { module = "io.github.davidepianca98:kmqtt-common-jvm", version.ref = "kmqtt" }
-kodein = "org.kodein.di:kodein-di:7.19.0"
+kodein = "org.kodein.di:kodein-di:7.21.2"
 kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
@@ -31,6 +33,7 @@ log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
 suncalc = "org.shredzone.commons:commons-suncalc:3.8"
+
 # plugins
 plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
 plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -39,6 +42,10 @@ plugin-versions = "com.github.ben-manes:gradle-versions-plugin:0.50.0"
 plugin-versions-update = "nl.littlerobots.vcu:plugin:0.8.1"
 
 [bundles]
+clikt = [
+    "clikt",
+    "jna-platform",
+]
 kmqtt-jvm = [
     "kmqtt-broker-jvm",
     "kmqtt-common-jvm",
@@ -51,6 +58,7 @@ kotlin-logging-jvm = [
 ]
 
 [plugins]
+buildConfig = "com.github.gmazzo.buildconfig:5.3.5"
 gradledoctor = "com.osacky.doctor:0.8.1"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

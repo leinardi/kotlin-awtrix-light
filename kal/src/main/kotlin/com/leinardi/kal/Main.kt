@@ -17,18 +17,15 @@
 package com.leinardi.kal
 
 import com.leinardi.kal.di.build
-import com.leinardi.kal.log.configureLog4j
-import io.github.oshai.kotlinlogging.Level
 import kotlinx.coroutines.runBlocking
 import org.kodein.di.DI
 
-fun main() {
+fun main(args: Array<String>) {
     runBlocking {
-        configureLog4j(Level.DEBUG)
         val kodein = DI { build() }
         Kal(kodein).run {
             Runtime.getRuntime().addShutdownHook(Thread { onCleared() })
-            onCreate()
+            main(args)
         }
     }
 }

@@ -16,25 +16,49 @@
 
 package com.leinardi.kal
 
+import com.github.ajalt.clikt.core.CliktCommand
+import com.github.ajalt.clikt.parameters.options.default
+import com.github.ajalt.clikt.parameters.options.flag
+import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.types.choice
 import com.leinardi.kal.coroutine.CoroutineDispatchers
+import com.leinardi.kal.log.configureLog4j
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.mqtt.MqttServer
 import com.leinardi.kal.scheduler.DayNightScheduler
+import io.github.oshai.kotlinlogging.Level
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
 
-class Kal(override val di: DI) : DIAware {
+class Kal(override val di: DI) : DIAware, CliktCommand() {
+    private val showVersion: Boolean by option("-v", "--version", help = "print product version to the output stream and exit").flag()
+    private val logLevel: Level by option("-l", "--loglevel", help = "TBD")
+        .choice(
+            "TRACE" to Level.TRACE,
+            "DEBUG" to Level.DEBUG,
+            "INFO" to Level.INFO,
+            "WARN" to Level.WARN,
+            "ERROR" to Level.ERROR,
+            "OFF" to Level.OFF,
+        )
+        .default(Level.INFO)
     private val coroutineDispatchers: CoroutineDispatchers by di.instance()
     private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
     private val dayNightScheduler: DayNightScheduler by di.instance()
     private val mqttServer: MqttServer by di.instance()
-    fun onCreate() {
-        logger.debug { "Kal onCreate" }
-        coroutineScope.launch { dayNightScheduler.start(this) }
-        mqttServer.start()
+
+    override fun run() {
+        configureLog4j(logLevel)
+        logger.debug { "Kal run" }
+        if (showVersion) {
+            echo(BuildConfig.VERSION)
+        } else {
+            coroutineScope.launch { dayNightScheduler.start(this) }
+            mqttServer.start()
+        }
     }
 
     fun onCleared() {

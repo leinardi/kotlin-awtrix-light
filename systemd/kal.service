@@ -1,0 +1,12 @@
+[Unit]
+Description=KAL
+After=network-online.target
+
+[Service]
+ExecStart=/usr/bin/java -jar /opt/kal/kal.jar
+Restart=on-success
+User=leinardi
+Group=leinardi
+
+[Install]
+WantedBy=multi-user.target

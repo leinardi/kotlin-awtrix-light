@@ -17,6 +17,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     application
+    alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlinx.serialization)
     id("detekt-conventions")
 }
@@ -35,9 +36,18 @@ if (kalVersion != null) {
     version = checkNotNull(kalVersion)
 }
 
+buildConfig {
+    packageName("com.leinardi.kal")
+    useKotlinOutput {
+        internalVisibility = true
+    }
+    buildConfigField("String", "VERSION", "\"${version}\"")
+}
+
 dependencies {
     implementation(libs.bundles.kmqtt.jvm)
     implementation(libs.bundles.kotlin.logging.jvm)
+    implementation(libs.bundles.clikt)
     implementation(libs.coroutines.core)
     implementation(libs.kodein)
     implementation(libs.kotlin.reflect)
@@ -71,6 +81,7 @@ tasks {
             attributes["Implementation-Version"] = version
             attributes["Build-Jdk"] = System.getProperty("java.version")
             attributes["Main-Class"] = application.mainClass.get()
+            attributes["Multi-Release"] = true
         }
         from(files(sourceSets.main.get().output.resourcesDir))
         from(files(sourceSets.main.get().output.classesDirs))
