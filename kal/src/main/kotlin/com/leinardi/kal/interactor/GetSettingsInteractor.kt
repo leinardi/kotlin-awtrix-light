@@ -18,10 +18,12 @@ package com.leinardi.kal.interactor
 
 import com.leinardi.kal.model.Settings
 import com.leinardi.kal.ui.theme.Theme
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 
-class GetSettingsInteractor(
-    private val isNightInteractor: IsNightInteractor,
-) {
+class GetSettingsInteractor(override val di: DI) : DIAware {
+    private val isNightInteractor: IsNightInteractor by di.instance()
     operator fun invoke(): Settings = Settings().applyTheme()
     private fun Settings.applyTheme(): Settings = if (isNightInteractor()) {
         copy(

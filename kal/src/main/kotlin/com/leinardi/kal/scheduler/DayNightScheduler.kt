@@ -24,13 +24,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 import java.time.Duration
 import java.time.ZonedDateTime
 
-class DayNightScheduler(
-    private val eventHandler: EventHandler,
-    private val getSunTimesInteractor: GetSunTimesInteractor,
-) {
+class DayNightScheduler(override val di: DI) : DIAware {
+    private val eventHandler: EventHandler by di.instance()
+    private val getSunTimesInteractor: GetSunTimesInteractor by di.instance()
     private val job = SupervisorJob()
 
     suspend fun start(coroutineScope: CoroutineScope) {

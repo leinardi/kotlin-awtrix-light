@@ -16,53 +16,30 @@
 
 package com.leinardi.kal.mqtt
 
+import com.leinardi.kal.BuildConfig
 import com.leinardi.kal.coroutine.CoroutineDispatchers
 import com.leinardi.kal.log.logger
-import com.leinardi.kal.model.Publishable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.serializer
+import kotlinx.coroutines.withContext
 import mqtt.broker.Broker
 import mqtt.packets.Qos
 import org.kodein.di.DI
 import org.kodein.di.DIAware
+import org.kodein.di.instance
 
 class MqttServer(
     override val di: DI,
-    auth: MqttAuthenticator,
-    packetInterceptor: MqttPacketHandler,
-    publishableChannel: Channel<Publishable>,
-    coroutineDispatchers: CoroutineDispatchers,
-    json: Json,
     wsPort: Int? = null,
-    mqttPort: Int = 1883,
+    mqttPort: Int = BuildConfig.MQTT_PORT,
 ) : DIAware {
-    private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
+    private val auth: MqttAuthenticator by di.instance()
+    private val packetInterceptor: MqttPacketHandler by di.instance()
+    private val coroutineDispatchers: CoroutineDispatchers by di.instance()
     private val broker = Broker(
         authentication = auth,
         packetInterceptor = packetInterceptor,
         webSocketPort = wsPort,
         port = mqttPort,
     )
-
-    init {
-        coroutineScope.launch {
-            for (element in publishableChannel) {
-                val payload = element.payload
-                if (payload == null) {
-                    logger.debug { "Publishing - topic: ${element.topic}" }
-                    send(element.topic, null)
-                } else {
-                    val serializer = json.serializersModule.serializer(payload::class.java)
-                    val payloadString = json.encodeToString(serializer, payload)
-                    logger.debug { "Publishing - topic: ${element.topic}, payload: $payloadString" }
-                    send(element.topic, payloadString)
-                }
-            }
-        }
-    }
 
     fun start() {
         logger.info { "Starting blocking MQTT broker: mqtt=${broker.port} ws=${broker.webSocketPort}" }
@@ -75,11 +52,15 @@ class MqttServer(
     }
 
     @OptIn(ExperimentalUnsignedTypes::class)
-    fun send(topic: String, payload: String?) = broker.publish(
-        retain = false,
-        topicName = topic,
-        qos = Qos.EXACTLY_ONCE,
-        properties = null,
-        payload = payload?.run { toByteArray().toUByteArray() },
-    )
+    suspend fun send(topic: String, payload: String?): Boolean = withContext(coroutineDispatchers.io) {
+        broker.publish(
+            retain = false,
+            topicName = topic,
+            qos = Qos.EXACTLY_ONCE,
+            properties = null,
+            payload = payload?.run { toByteArray().toUByteArray() },
+        )
+    }
+
+    fun isClientConnected(clientId: String) = broker.isClientConnected(clientId)
 }

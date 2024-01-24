@@ -21,4 +21,5 @@ import com.leinardi.kal.model.Stats
 class ClientStateManager {
     val lastReceivedStats: MutableMap<String, Stats> = mutableMapOf()
     val currentApp: MutableMap<String, String> = mutableMapOf()
+    val connectedDevices: MutableSet<String> = mutableSetOf()
 }

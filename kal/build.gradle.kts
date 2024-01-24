@@ -42,6 +42,7 @@ buildConfig {
         internalVisibility = true
     }
     buildConfigField("String", "VERSION", "\"${version}\"")
+    buildConfigField("Int", "MQTT_PORT", 1883)
 }
 
 dependencies {

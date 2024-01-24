@@ -32,4 +32,5 @@ fi
 echo "Current KAL version: $jar_version"
 
 # Step 2: Run the script "fetch_release.py" with the jar version as a parameter
-"$script_dir/fetch_release.py" "$kal_dir" "$jar_version"
+"$script_dir/fetch_release.py" "$kal_dir" "$jar_version" && \
+sudo systemctl restart kal.service

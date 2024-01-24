@@ -14,23 +14,14 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.ui.theme
+package com.leinardi.kal.interactor
 
-import com.leinardi.kal.model.Color
+import com.leinardi.kal.mqtt.MqttServer
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 
-object Theme {
-    object Day : DayNightTheme {
-        override val calendarAccent = Color(0x5A55F7)
-        override val contentColor = Color(0xFFFFFF)
-    }
-
-    object Night : DayNightTheme {
-        override val calendarAccent = Color(0x5A55F7)
-        override val contentColor = Color(0x474747)
-    }
-
-    private interface DayNightTheme {
-        val calendarAccent: Color
-        val contentColor: Color
-    }
+class IsClientConnectedInteractor(override val di: DI) : DIAware {
+    private val mqttServer: MqttServer by di.instance()
+    operator fun invoke(clientId: String): Boolean = mqttServer.isClientConnected(clientId)
 }

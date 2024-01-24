@@ -21,19 +21,18 @@ import com.leinardi.kal.coroutine.CoroutineDispatchers
 import com.leinardi.kal.event.EventHandler
 import com.leinardi.kal.interactor.GetSettingsInteractor
 import com.leinardi.kal.interactor.GetSunTimesInteractor
+import com.leinardi.kal.interactor.IsClientConnectedInteractor
 import com.leinardi.kal.interactor.IsNightInteractor
-import com.leinardi.kal.model.Publishable
+import com.leinardi.kal.interactor.PublishInteractor
 import com.leinardi.kal.mqtt.MqttAuthenticator
 import com.leinardi.kal.mqtt.MqttPacketHandler
 import com.leinardi.kal.mqtt.MqttServer
 import com.leinardi.kal.scheduler.DayNightScheduler
-import kotlinx.coroutines.channels.Channel
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.kodein.di.DI
 import org.kodein.di.bindProvider
 import org.kodein.di.bindSingleton
-import org.kodein.di.instance
 
 @OptIn(ExperimentalSerializationApi::class)
 fun DI.MainBuilder.build() {
@@ -45,14 +44,15 @@ fun DI.MainBuilder.build() {
         }
     }
     bindProvider { CoroutineDispatchers() }
-    bindSingleton { Channel<Publishable>(Channel.UNLIMITED) }
     bindSingleton { ClientStateManager() }
-    bindSingleton { DayNightScheduler(instance(), instance()) }
-    bindSingleton { EventHandler(instance(), instance(), instance(), instance()) }
-    bindSingleton { GetSettingsInteractor(instance()) }
+    bindSingleton { DayNightScheduler(di) }
+    bindSingleton { EventHandler(di) }
+    bindSingleton { GetSettingsInteractor(di) }
     bindSingleton { GetSunTimesInteractor() }
-    bindSingleton { IsNightInteractor(instance()) }
+    bindSingleton { IsNightInteractor(di) }
+    bindSingleton { IsClientConnectedInteractor(di) }
     bindSingleton { MqttAuthenticator() }
-    bindSingleton { MqttPacketHandler(instance(), instance()) }
-    bindSingleton { MqttServer(di, instance(), instance(), instance(), instance(), instance()) }
+    bindSingleton { MqttPacketHandler(di) }
+    bindSingleton { MqttServer(di) }
+    bindSingleton { PublishInteractor(di) }
 }
