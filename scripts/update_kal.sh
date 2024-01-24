@@ -16,8 +16,11 @@
 # limitations under the License.
 #
 
-# Step 1: Get the version of the jar "kal.jar"
 kal_dir="/opt/kal"
+
+
+# Step 1: Get the version of the jar "kal.jar"
+script_dir="$(dirname "$(readlink -f "$0")")"
 jar_version=$(java -jar ${kal_dir}/kal.jar -v)
 
 # Check the exit code after getting the version
@@ -29,4 +32,4 @@ fi
 echo "Current KAL version: $jar_version"
 
 # Step 2: Run the script "fetch_release.py" with the jar version as a parameter
-./fetch_release.py "$kal_dir" "$jar_version"
+"$script_dir/fetch_release.py" "$kal_dir" "$jar_version"

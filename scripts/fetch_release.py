@@ -66,12 +66,12 @@ if __name__ == "__main__":
         target_release_tag = sys.argv[2]
 
     if target_release_tag is not None and target_release_tag == latest_release_tag:
-        print(f"Nothing to download: release tag {latest_release_tag} is the latest release.")
+        print(f"Nothing to download: version {latest_release_tag} is the latest GitHub release.")
         exit(1)
     elif latest_release_tag:
-        print(f"Latest Release Tag: {latest_release_tag}")
+        print(f"Latest GitHub release: {latest_release_tag}")
         download_release_assets(release_assets, download_dir, latest_release_tag)
         exit(0)
     else:
-        print("Unable to fetch the latest release.")
+        print("Unable to fetch the latest GitHub release.")
         exit(2)
