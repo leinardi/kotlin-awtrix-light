@@ -18,11 +18,10 @@ package com.leinardi.kal
 
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
 import com.leinardi.kal.coroutine.CoroutineDispatchers
-import com.leinardi.kal.log.configureLog4j
+import com.leinardi.kal.log.Logger
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.mqtt.MqttServer
 import com.leinardi.kal.scheduler.DayNightScheduler
@@ -32,9 +31,9 @@ import kotlinx.coroutines.launch
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
+import java.net.BindException
 
 class Kal(override val di: DI) : DIAware, CliktCommand() {
-    private val showVersion: Boolean by option("-v", "--version", help = "print product version to the output stream and exit").flag()
     private val logLevel: Level by option("-l", "--loglevel", help = "TBD")
         .choice(
             "TRACE" to Level.TRACE,
@@ -49,20 +48,27 @@ class Kal(override val di: DI) : DIAware, CliktCommand() {
     private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
     private val dayNightScheduler: DayNightScheduler by di.instance()
     private val mqttServer: MqttServer by di.instance()
+    private var running: Boolean = false
 
     override fun run() {
-        configureLog4j(logLevel)
+        Logger.setRootLoggerLevel(logLevel)
         logger.debug { "Kal run" }
-        if (showVersion) {
-            echo(BuildConfig.VERSION)
-        } else {
-            coroutineScope.launch { dayNightScheduler.start(this) }
+        coroutineScope.launch { dayNightScheduler.start(this) }
+        try {
+            running = true
             mqttServer.start()
+        } catch (e: BindException) {
+            logger.error { e.message }
+        } finally {
+            running = false
         }
     }
 
     fun onCleared() {
         logger.debug { "Kal onCleared" }
-        mqttServer.stop()
+        if (running) {
+            mqttServer.stop()
+            running = false
+        }
     }
 }

@@ -14,10 +14,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from typing import List, Dict, Union, Optional
 import os
 import requests
 import sys
+from typing import List, Dict, Union, Optional
 
 _REPO_OWNER = "leinardi"
 _REPO_NAME = "kotlin-awtrix-light"
