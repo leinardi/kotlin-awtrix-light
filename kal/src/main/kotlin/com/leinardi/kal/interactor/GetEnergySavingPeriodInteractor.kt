@@ -16,15 +16,9 @@
 
 package com.leinardi.kal.interactor
 
-import com.leinardi.kal.scheduler.DayNightScheduler
-import org.shredzone.commons.suncalc.SunTimes
-import java.time.ZonedDateTime
+import com.leinardi.kal.model.EnergySavingPeriod
+import java.time.LocalTime
 
-class GetSunTimesInteractor {
-    operator fun invoke(time: ZonedDateTime): SunTimes = SunTimes.compute()
-        .on(time)
-        .at(DayNightScheduler.MY_LOCATION)
-        .twilight(SunTimes.Twilight.VISUAL)
-        .fullCycle()
-        .execute()
+class GetEnergySavingPeriodInteractor {
+    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.MIDNIGHT, LocalTime.of(6, 0))
 }

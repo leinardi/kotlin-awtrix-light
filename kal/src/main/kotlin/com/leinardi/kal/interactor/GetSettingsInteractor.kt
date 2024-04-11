@@ -23,8 +23,13 @@ import org.kodein.di.DIAware
 import org.kodein.di.instance
 
 class GetSettingsInteractor(override val di: DI) : DIAware {
+    private val isEnergySavingTimeInteractor: IsEnergySavingTimeInteractor by di.instance()
     private val isNightInteractor: IsNightInteractor by di.instance()
-    operator fun invoke(): Settings = Settings().applyTheme()
+
+    operator fun invoke(): Settings = Settings()
+        .applyTheme()
+        .applyEnergyProfile()
+
     private fun Settings.applyTheme(): Settings = if (isNightInteractor()) {
         copy(
             calendarHeaderColor = Theme.Night.calendarAccent,
@@ -43,5 +48,14 @@ class GetSettingsInteractor(override val di: DI) : DIAware {
             timeColor = Theme.Day.contentColor,
             dateColor = Theme.Day.contentColor,
         )
+    }
+
+    private fun Settings.applyEnergyProfile(): Settings = if (isEnergySavingTimeInteractor()) {
+        copy(
+            brightness = 1,
+            autoBrightness = false,
+        )
+    } else {
+        copy(autoBrightness = true)
     }
 }

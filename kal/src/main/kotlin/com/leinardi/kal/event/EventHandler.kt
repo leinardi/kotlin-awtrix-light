@@ -48,6 +48,7 @@ class EventHandler(override val di: DI) : DIAware {
                     is Event.DayNightChanged -> handleDayNightChanged(event)
                     is Event.DeviceConnected -> clientStateManager.connectedDevices.add(event.clientId)
                     is Event.DeviceDisconnected -> clientStateManager.connectedDevices.remove(event.clientId)
+                    is Event.EnergyProfileChanged -> handleEnergyProfileChanged(event)
                     is Event.SettingsAvailable -> handleSettingsIsAvailable(event)
                     is Event.StatsReceived -> handleStatsReceived(event)
                 }
@@ -62,6 +63,13 @@ class EventHandler(override val di: DI) : DIAware {
 
     private suspend fun handleDayNightChanged(event: Event.DayNightChanged) {
         logger.debug { "DayNightChanged: night = ${event.isNight}" }
+        clientStateManager.connectedDevices.forEach { clientId ->
+            refreshSettings(clientId)
+        }
+    }
+
+    private suspend fun handleEnergyProfileChanged(event: Event.EnergyProfileChanged) {
+        logger.debug { "EnergyProfileChanged: energy saving = ${event.energySaving}" }
         clientStateManager.connectedDevices.forEach { clientId ->
             refreshSettings(clientId)
         }

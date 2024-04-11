@@ -1,0 +1,9 @@
+[Unit]
+Description=Turn off the Pi LED after boot
+
+[Service]
+Type=oneshot
+ExecStart=/bin/sh -c 'echo "0" > /sys/class/leds/led0/brightness'
+
+[Install]
+WantedBy=multi-user.target

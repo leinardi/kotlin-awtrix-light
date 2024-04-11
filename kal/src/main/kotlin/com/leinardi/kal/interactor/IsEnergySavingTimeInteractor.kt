@@ -16,15 +16,11 @@
 
 package com.leinardi.kal.interactor
 
-import com.leinardi.kal.scheduler.DayNightScheduler
-import org.shredzone.commons.suncalc.SunTimes
-import java.time.ZonedDateTime
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 
-class GetSunTimesInteractor {
-    operator fun invoke(time: ZonedDateTime): SunTimes = SunTimes.compute()
-        .on(time)
-        .at(DayNightScheduler.MY_LOCATION)
-        .twilight(SunTimes.Twilight.VISUAL)
-        .fullCycle()
-        .execute()
+class IsEnergySavingTimeInteractor(override val di: DI) : DIAware {
+    private val getEnergySavingPeriodInteractor: GetEnergySavingPeriodInteractor by di.instance()
+    operator fun invoke(): Boolean = getEnergySavingPeriodInteractor().isEnergySavingTime()
 }

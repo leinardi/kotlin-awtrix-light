@@ -25,6 +25,7 @@ import com.leinardi.kal.log.Logger
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.mqtt.MqttServer
 import com.leinardi.kal.scheduler.DayNightScheduler
+import com.leinardi.kal.scheduler.EnergyProfileScheduler
 import io.github.oshai.kotlinlogging.Level
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ class Kal(override val di: DI) : DIAware, CliktCommand() {
     private val coroutineDispatchers: CoroutineDispatchers by di.instance()
     private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
     private val dayNightScheduler: DayNightScheduler by di.instance()
+    private val energyProfileScheduler: EnergyProfileScheduler by di.instance()
     private val mqttServer: MqttServer by di.instance()
     private var running: Boolean = false
 
@@ -54,6 +56,7 @@ class Kal(override val di: DI) : DIAware, CliktCommand() {
         Logger.setRootLoggerLevel(logLevel)
         logger.debug { "Kal run" }
         coroutineScope.launch { dayNightScheduler.start(this) }
+        coroutineScope.launch { energyProfileScheduler.start(this) }
         try {
             running = true
             mqttServer.start()
