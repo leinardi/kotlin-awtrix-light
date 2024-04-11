@@ -62,5 +62,7 @@ class MqttServer(
         )
     }
 
-    fun isClientConnected(clientId: String) = broker.isClientConnected(clientId)
+    fun getConnectedClientIds(): Set<String> = broker.getConnectedClientIds()
+
+    fun isClientConnected(clientId: String): Boolean = broker.isClientConnected(clientId)
 }

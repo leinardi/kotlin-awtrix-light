@@ -73,6 +73,7 @@ class DayNightScheduler(override val di: DI) : DIAware {
     private data class ScheduledTime(val time: ZonedDateTime, val isNight: Boolean)
 
     companion object {
+        const val MY_ELEVATION: Double = 530.0
         val MY_LOCATION: DoubleArray = doubleArrayOf(48.137154, 11.576124)
     }
 }

@@ -16,10 +16,8 @@
 
 package com.leinardi.kal.mqtt
 
-import com.leinardi.kal.awtrix.ClientStateManager
 import com.leinardi.kal.event.EventHandler
 import com.leinardi.kal.ext.asString
-import com.leinardi.kal.interactor.IsClientConnectedInteractor
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.model.Button
 import com.leinardi.kal.model.Event
@@ -38,9 +36,7 @@ import org.kodein.di.instance
 
 @OptIn(ExperimentalUnsignedTypes::class)
 class MqttPacketHandler(override val di: DI) : PacketInterceptor, DIAware {
-    private val clientStateManager: ClientStateManager by di.instance()
     private val eventHandler: EventHandler by di.instance()
-    private val isClientConnectedInteractor: IsClientConnectedInteractor by di.instance()
     private val json: Json by di.instance()
     override fun packetReceived(
         clientId: String,
@@ -60,19 +56,10 @@ class MqttPacketHandler(override val di: DI) : PacketInterceptor, DIAware {
 
     private fun handleMqttConnect(packet: MQTTConnect) {
         logger.info { "MQTTConnect - protocol: ${packet.protocolName}${packet.protocolVersion}, clientID: ${packet.clientID}" }
-        eventHandler.sendEvent(Event.DeviceConnected(clientId = packet.clientID))
     }
 
     private fun handleMqttDisconnect() {
         logger.info { "MQTTDisconnect" }
-        clientStateManager.connectedDevices.removeIf { clientId ->
-            if (isClientConnectedInteractor(clientId)) {
-                eventHandler.sendEvent(Event.DeviceDisconnected(clientId = clientId))
-                true
-            } else {
-                false
-            }
-        }
     }
 
     private fun handleMqttSubscribe(packet: MQTTSubscribe) {
@@ -84,7 +71,8 @@ class MqttPacketHandler(override val di: DI) : PacketInterceptor, DIAware {
 
     private fun handleMqttPublish(packet: MQTTPublish) {
         logger.debug { "MQTTPublish - topic: ${packet.topicName}, payload: ${packet.payload?.asString()}" }
-        packet.payload?.asString()?.let { payload ->
+        val payload = packet.payload?.asString()
+        if (payload != null) {
             val topic = packet.topicName.split("/")
             val clientId = topic.first()
             if (topic.size == 2 && topic.last() == TOPIC_STATS) {

@@ -1,18 +1,18 @@
 # Sharing dependency versions between projects
 # https://docs.gradle.org/current/userguide/platforms.html
 [versions]
-coroutines = "1.7.3"
-detekt = "1.23.4"
-gradle = "8.5"
+coroutines = "1.8.0"
+detekt = "1.23.6"
+gradle = "8.7"
 java = "17"
-kmqtt = "0.4.4"
-kotlin = "1.9.22"
-kotlin-logging = "6.0.3"
-kotlin-result = "1.1.18"
-log4j = "2.22.1"
+kmqtt = "0.4.6"
+kotlin = "1.9.23"
+kotlin-logging = "6.0.4"
+kotlin-result = "2.0.0"
+log4j = "2.23.1"
 
 [libraries]
-clikt = "com.github.ajalt.clikt:clikt:4.2.2"
+clikt = "com.github.ajalt.clikt:clikt:4.3.0"
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
@@ -28,11 +28,11 @@ kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotatio
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-junit5 = "org.jetbrains.kotlin:kotlin-test-junit5:1.9.10"
 kotlinx-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
 log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
-suncalc = "org.shredzone.commons:commons-suncalc:3.8"
+suncalc = "org.shredzone.commons:commons-suncalc:3.10"
 
 # plugins
 plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }

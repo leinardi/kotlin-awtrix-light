@@ -16,17 +16,12 @@
 
 package com.leinardi.kal.interactor
 
-import com.leinardi.kal.scheduler.DayNightScheduler
-import com.leinardi.kal.scheduler.DayNightScheduler.Companion.MY_ELEVATION
-import org.shredzone.commons.suncalc.SunTimes
-import java.time.ZonedDateTime
+import com.leinardi.kal.mqtt.MqttServer
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.instance
 
-class GetSunTimesInteractor {
-    operator fun invoke(time: ZonedDateTime): SunTimes = SunTimes.compute()
-        .on(time)
-        .at(DayNightScheduler.MY_LOCATION)
-        .elevation(MY_ELEVATION)
-        .twilight(SunTimes.Twilight.VISUAL)
-        .fullCycle()
-        .execute()
+class GetConnectedClientIdsInteractor(override val di: DI) : DIAware {
+    private val mqttServer: MqttServer by di.instance()
+    operator fun invoke(): Set<String> = mqttServer.getConnectedClientIds()
 }

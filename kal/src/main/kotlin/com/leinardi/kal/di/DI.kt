@@ -19,6 +19,7 @@ package com.leinardi.kal.di
 import com.leinardi.kal.awtrix.ClientStateManager
 import com.leinardi.kal.coroutine.CoroutineDispatchers
 import com.leinardi.kal.event.EventHandler
+import com.leinardi.kal.interactor.GetConnectedClientIdsInteractor
 import com.leinardi.kal.interactor.GetEnergySavingPeriodInteractor
 import com.leinardi.kal.interactor.GetSettingsInteractor
 import com.leinardi.kal.interactor.GetSunTimesInteractor
@@ -54,6 +55,7 @@ fun DI.MainBuilder.build() {
     bindSingleton { GetEnergySavingPeriodInteractor() }
     bindSingleton { GetSettingsInteractor(di) }
     bindSingleton { GetSunTimesInteractor() }
+    bindSingleton { GetConnectedClientIdsInteractor(di) }
     bindSingleton { IsClientConnectedInteractor(di) }
     bindSingleton { IsEnergySavingTimeInteractor(di) }
     bindSingleton { IsNightInteractor(di) }

@@ -18,6 +18,7 @@ package com.leinardi.kal.event
 
 import com.leinardi.kal.awtrix.ClientStateManager
 import com.leinardi.kal.coroutine.CoroutineDispatchers
+import com.leinardi.kal.interactor.GetConnectedClientIdsInteractor
 import com.leinardi.kal.interactor.GetSettingsInteractor
 import com.leinardi.kal.interactor.PublishInteractor
 import com.leinardi.kal.log.logger
@@ -36,6 +37,7 @@ class EventHandler(override val di: DI) : DIAware {
     private val clientStateManager: ClientStateManager by di.instance()
     private val coroutineDispatchers: CoroutineDispatchers by di.instance()
     private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
+    private val getConnectedClientIdsInteractor: GetConnectedClientIdsInteractor by di.instance()
     private val getSettingsInteractor: GetSettingsInteractor by di.instance()
     private val publishInteractor: PublishInteractor by di.instance()
 
@@ -46,8 +48,6 @@ class EventHandler(override val di: DI) : DIAware {
                     is Event.ButtonPressed -> logger.debug { "Event Received: $event" }
                     is Event.CurrentApp -> clientStateManager.currentApp[event.clientId] = event.app
                     is Event.DayNightChanged -> handleDayNightChanged(event)
-                    is Event.DeviceConnected -> clientStateManager.connectedDevices.add(event.clientId)
-                    is Event.DeviceDisconnected -> clientStateManager.connectedDevices.remove(event.clientId)
                     is Event.EnergyProfileChanged -> handleEnergyProfileChanged(event)
                     is Event.SettingsAvailable -> handleSettingsIsAvailable(event)
                     is Event.StatsReceived -> handleStatsReceived(event)
@@ -63,20 +63,19 @@ class EventHandler(override val di: DI) : DIAware {
 
     private suspend fun handleDayNightChanged(event: Event.DayNightChanged) {
         logger.debug { "DayNightChanged: night = ${event.isNight}" }
-        clientStateManager.connectedDevices.forEach { clientId ->
+        getConnectedClientIdsInteractor().forEach { clientId ->
             refreshSettings(clientId)
         }
     }
 
     private suspend fun handleEnergyProfileChanged(event: Event.EnergyProfileChanged) {
         logger.debug { "EnergyProfileChanged: energy saving = ${event.energySaving}" }
-        clientStateManager.connectedDevices.forEach { clientId ->
+        getConnectedClientIdsInteractor().forEach { clientId ->
             refreshSettings(clientId)
         }
     }
 
     private fun handleStatsReceived(event: Event.StatsReceived) {
-        clientStateManager.connectedDevices.add(event.clientId)
         clientStateManager.lastReceivedStats[event.clientId] = event.stats
     }
 
