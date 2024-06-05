@@ -1,25 +1,25 @@
 # Sharing dependency versions between projects
 # https://docs.gradle.org/current/userguide/platforms.html
 [versions]
-coroutines = "1.8.0"
+coroutines = "1.8.1"
 detekt = "1.23.6"
 gradle = "8.7"
 java = "17"
-kmqtt = "0.4.6"
-kotlin = "1.9.23"
-kotlin-logging = "6.0.4"
+kmqtt = "0.4.7"
+kotlin = "2.0.0"
+kotlin-logging = "6.0.9"
 kotlin-result = "2.0.0"
 log4j = "2.23.1"
 
 [libraries]
-clikt = "com.github.ajalt.clikt:clikt:4.3.0"
+clikt = "com.github.ajalt.clikt:clikt:4.4.0"
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 jna-platform = "net.java.dev.jna:jna-platform:5.14.0"
 kmqtt-broker-jvm = { module = "io.github.davidepianca98:kmqtt-broker-jvm", version.ref = "kmqtt" }
 kmqtt-common-jvm = { module = "io.github.davidepianca98:kmqtt-common-jvm", version.ref = "kmqtt" }
-kodein = "org.kodein.di:kodein-di:7.21.2"
+kodein = "org.kodein.di:kodein-di:7.22.0"
 kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
@@ -59,6 +59,6 @@ kotlin-logging-jvm = [
 
 [plugins]
 buildConfig = "com.github.gmazzo.buildconfig:5.3.5"
-gradledoctor = "com.osacky.doctor:0.8.1"
+gradledoctor = "com.osacky.doctor:0.10.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
