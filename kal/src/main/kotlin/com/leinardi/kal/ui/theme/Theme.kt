@@ -20,12 +20,12 @@ import com.leinardi.kal.model.Color
 
 object Theme {
     object Day : DayNightTheme {
-        override val calendarAccent = Color(0x5A55F7)
+        override val calendarAccent = Color(0xFF0000)
         override val contentColor = Color(0xFFFFFF)
     }
 
     object Night : DayNightTheme {
-        override val calendarAccent = Color(0x5A55F7)
+        override val calendarAccent = Color(0xFF0000)
         override val contentColor = Color(0x474747)
     }
 
