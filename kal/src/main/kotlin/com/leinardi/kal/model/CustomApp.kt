@@ -51,4 +51,5 @@ data class CustomApp(
     val effect: String? = null,
     val effectSettings: EffectSettings? = null,
     val save: Boolean? = null,
+    val overlay: OverlayEffect? = null,
 )

@@ -89,6 +89,8 @@ data class Settings(
     val matrixEnabled: Boolean? = null,
     @SerialName("VOL")
     val volumeDfplayer: Int? = null,
+    @SerialName("OVERLAY")
+    val overlay: OverlayEffect? = null,
 ) {
     enum class TransitionEffect {
         @SerialName("0")

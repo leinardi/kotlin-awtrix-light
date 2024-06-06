@@ -73,6 +73,7 @@ class NotificationTest : DIAware {
             scrollSpeed = 100,
             effect = "semper",
             effectSettings = EffectSettings(speed = 3, palette = "Rainbow", blend = true),
+            overlay = OverlayEffect.Rain,
         )
         val jsonString = json.encodeToString(notification)
         assertEquals(notification, json.decodeFromString(jsonString))

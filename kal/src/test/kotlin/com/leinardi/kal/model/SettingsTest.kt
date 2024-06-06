@@ -67,6 +67,7 @@ class SettingsTest : DIAware {
             batteryApp = true,
             matrixEnabled = true,
             volumeDfplayer = 9985,
+            overlay = OverlayEffect.Rain,
         )
         val jsonString = json.encodeToString(settings)
         assertEquals(settings, json.decodeFromString(jsonString))

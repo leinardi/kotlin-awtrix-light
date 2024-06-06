@@ -53,4 +53,5 @@ data class Notification(
     val scrollSpeed: Int? = null,
     val effect: String? = null,
     val effectSettings: EffectSettings? = null,
+    val overlay: OverlayEffect? = null,
 )
