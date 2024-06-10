@@ -23,6 +23,7 @@ import com.leinardi.kal.interactor.GetSettingsInteractor
 import com.leinardi.kal.interactor.PublishInteractor
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.model.Event
+import com.leinardi.kal.model.Notification
 import com.leinardi.kal.model.Publishable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
@@ -50,6 +51,7 @@ class EventHandler(override val di: DI) : DIAware {
                     is Event.DayNightChanged -> handleDayNightChanged(event)
                     is Event.EnergyProfileChanged -> handleEnergyProfileChanged(event)
                     is Event.SettingsAvailable -> handleSettingsIsAvailable(event)
+                    is Event.ShowNotification -> handleShowNotification(event.notification)
                     is Event.StatsReceived -> handleStatsReceived(event)
                 }
             }
@@ -75,6 +77,18 @@ class EventHandler(override val di: DI) : DIAware {
 
     private fun handleStatsReceived(event: Event.StatsReceived) {
         clientStateManager.lastReceivedStats[event.clientId] = event.stats
+    }
+
+    private suspend fun handleShowNotification(notification: Notification) {
+        logger.debug { "ShowNotification: $notification" }
+        getConnectedClientIdsInteractor().forEach { clientId ->
+            val notify = Publishable.Notify(
+                clientId = clientId,
+                payload = notification,
+            )
+            publishInteractor(notify)
+        }
+
     }
 
     private suspend fun refreshSettings(clientId: String) {

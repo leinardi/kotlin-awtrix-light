@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.model
+package com.leinardi.kal.ext
 
-sealed class Event {
-    data class ButtonPressed(val clientId: String, val button: Button, val motionEvent: MotionEvent) : Event()
-    data class CurrentApp(val clientId: String, val app: String) : Event()
-    data class DayNightChanged(val isNight: Boolean) : Event()
-    data class EnergyProfileChanged(val energySaving: Boolean) : Event()
-    data class SettingsAvailable(val clientId: String) : Event()
-    data class ShowNotification(val notification: Notification) : Event()
-    data class StatsReceived(val clientId: String, val stats: Stats) : Event()
+import java.time.LocalDate
+import java.time.Period
+
+fun LocalDate.yearsSince(): Int {
+    val currentDate = LocalDate.now()
+    val period = Period.between(this, currentDate)
+    return period.years
 }

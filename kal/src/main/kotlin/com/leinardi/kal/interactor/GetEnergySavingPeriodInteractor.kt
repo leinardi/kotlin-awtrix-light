@@ -20,5 +20,5 @@ import com.leinardi.kal.model.EnergySavingPeriod
 import java.time.LocalTime
 
 class GetEnergySavingPeriodInteractor {
-    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.MIDNIGHT, LocalTime.of(6, 0))
+    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.of(0, 30), LocalTime.of(6, 0))
 }
