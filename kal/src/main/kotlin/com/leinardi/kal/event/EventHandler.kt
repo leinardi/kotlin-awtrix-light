@@ -70,9 +70,7 @@ class EventHandler(override val di: DI) : DIAware {
 
     private suspend fun handleEnergyProfileChanged(event: Event.EnergyProfileChanged) {
         logger.debug { "EnergyProfileChanged: energy saving = ${event.energySaving}" }
-        getConnectedClientIdsInteractor().forEach { clientId ->
-            refreshSettings(clientId)
-        }
+        getConnectedClientIdsInteractor().forEach { clientId -> refreshSettings(clientId) }
     }
 
     private fun handleStatsReceived(event: Event.StatsReceived) {

@@ -20,18 +20,21 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
-import com.leinardi.kal.coroutine.CoroutineDispatchers
+import com.leinardi.kal.ext.scheduleJob
 import com.leinardi.kal.log.Logger
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.mqtt.MqttServer
-import com.leinardi.kal.scheduler.DayNightScheduler
-import com.leinardi.kal.scheduler.EnergyProfileScheduler
+import com.leinardi.kal.scheduler.KodeinJobFactory
+import com.leinardi.kal.scheduler.LogSchedulerListener
+import com.leinardi.kal.scheduler.alarm.EnergySavingEndPeriodAlarm
+import com.leinardi.kal.scheduler.alarm.EnergySavingStartPeriodAlarm
+import com.leinardi.kal.scheduler.alarm.SunriseAlarm
+import com.leinardi.kal.scheduler.alarm.SunsetAlarm
 import io.github.oshai.kotlinlogging.Level
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import org.kodein.di.DI
 import org.kodein.di.DIAware
 import org.kodein.di.instance
+import org.quartz.Scheduler
 import java.net.BindException
 
 class Kal(override val di: DI) : DIAware, CliktCommand() {
@@ -45,18 +48,15 @@ class Kal(override val di: DI) : DIAware, CliktCommand() {
             "OFF" to Level.OFF,
         )
         .default(Level.INFO)
-    private val coroutineDispatchers: CoroutineDispatchers by di.instance()
-    private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
-    private val dayNightScheduler: DayNightScheduler by di.instance()
-    private val energyProfileScheduler: EnergyProfileScheduler by di.instance()
+    private val scheduler: Scheduler by di.instance()
+
     private val mqttServer: MqttServer by di.instance()
     private var running: Boolean = false
 
     override fun run() {
         Logger.setRootLoggerLevel(logLevel)
         logger.debug { "Kal run" }
-        coroutineScope.launch { dayNightScheduler.start(this) }
-        coroutineScope.launch { energyProfileScheduler.start(this) }
+        initScheduler()
         try {
             running = true
             mqttServer.start()
@@ -67,8 +67,24 @@ class Kal(override val di: DI) : DIAware, CliktCommand() {
         }
     }
 
+    private fun initScheduler() {
+        val kodeinJobFactory: KodeinJobFactory by di.instance()
+        val energySavingEndPeriodAlarm: EnergySavingEndPeriodAlarm by di.instance()
+        val energySavingStartPeriodAlarm: EnergySavingStartPeriodAlarm by di.instance()
+        val sunriseAlarm: SunriseAlarm by di.instance()
+        val sunsetAlarm: SunsetAlarm by di.instance()
+        scheduler.listenerManager.addSchedulerListener(LogSchedulerListener())
+        scheduler.setJobFactory(kodeinJobFactory)
+        scheduler.start()
+        scheduler.scheduleJob(energySavingStartPeriodAlarm)
+        scheduler.scheduleJob(energySavingEndPeriodAlarm)
+        scheduler.scheduleJob(sunriseAlarm)
+        scheduler.scheduleJob(sunsetAlarm)
+    }
+
     fun onCleared() {
         logger.debug { "Kal onCleared" }
+        scheduler.shutdown()
         if (running) {
             mqttServer.stop()
             running = false

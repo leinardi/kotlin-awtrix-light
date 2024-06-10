@@ -14,22 +14,18 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.interactor
+package com.leinardi.kal.scheduler
 
-import org.shredzone.commons.suncalc.SunTimes
-import java.time.ZonedDateTime
+import org.kodein.di.DI
+import org.kodein.di.DIAware
+import org.kodein.di.direct
+import org.kodein.type.erased
+import org.quartz.Job
+import org.quartz.Scheduler
+import org.quartz.spi.JobFactory
+import org.quartz.spi.TriggerFiredBundle
 
-class GetSunTimesInteractor {
-    operator fun invoke(time: ZonedDateTime = ZonedDateTime.now()): SunTimes = SunTimes.compute()
-        .on(time)
-        .at(MY_LOCATION)
-        .elevation(MY_ELEVATION)
-        .twilight(SunTimes.Twilight.VISUAL)
-        .fullCycle()
-        .execute()
-
-    companion object {
-        const val MY_ELEVATION: Double = 530.0
-        val MY_LOCATION: DoubleArray = doubleArrayOf(48.137154, 11.576124)
-    }
+class KodeinJobFactory(override val di: DI) : JobFactory, DIAware {
+    override fun newJob(bundle: TriggerFiredBundle, scheduler: Scheduler): Job =
+        di.direct.Instance(erased(bundle.jobDetail.jobClass.kotlin))
 }

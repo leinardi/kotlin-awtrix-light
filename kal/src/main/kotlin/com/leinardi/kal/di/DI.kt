@@ -30,13 +30,17 @@ import com.leinardi.kal.interactor.PublishInteractor
 import com.leinardi.kal.mqtt.MqttAuthenticator
 import com.leinardi.kal.mqtt.MqttPacketHandler
 import com.leinardi.kal.mqtt.MqttServer
-import com.leinardi.kal.scheduler.DayNightScheduler
-import com.leinardi.kal.scheduler.EnergyProfileScheduler
+import com.leinardi.kal.scheduler.KodeinJobFactory
+import com.leinardi.kal.scheduler.alarm.EnergySavingEndPeriodAlarm
+import com.leinardi.kal.scheduler.alarm.EnergySavingStartPeriodAlarm
+import com.leinardi.kal.scheduler.alarm.SunriseAlarm
+import com.leinardi.kal.scheduler.alarm.SunsetAlarm
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import org.kodein.di.DI
 import org.kodein.di.bindProvider
 import org.kodein.di.bindSingleton
+import org.quartz.impl.StdSchedulerFactory
 
 @OptIn(ExperimentalSerializationApi::class)
 fun DI.MainBuilder.build() {
@@ -49,18 +53,26 @@ fun DI.MainBuilder.build() {
     }
     bindProvider { CoroutineDispatchers() }
     bindSingleton { ClientStateManager() }
-    bindSingleton { DayNightScheduler(di) }
-    bindSingleton { EnergyProfileScheduler(di) }
+    bindSingleton { EnergySavingEndPeriodAlarm(di) }
+    bindSingleton { EnergySavingEndPeriodAlarm.EnergySavingEndPeriodJob(di) }
+    bindSingleton { EnergySavingStartPeriodAlarm(di) }
+    bindSingleton { EnergySavingStartPeriodAlarm.EnergySavingStartPeriodJob(di) }
     bindSingleton { EventHandler(di) }
+    bindSingleton { GetConnectedClientIdsInteractor(di) }
     bindSingleton { GetEnergySavingPeriodInteractor() }
     bindSingleton { GetSettingsInteractor(di) }
     bindSingleton { GetSunTimesInteractor() }
-    bindSingleton { GetConnectedClientIdsInteractor(di) }
     bindSingleton { IsClientConnectedInteractor(di) }
     bindSingleton { IsEnergySavingTimeInteractor(di) }
     bindSingleton { IsNightInteractor(di) }
+    bindSingleton { KodeinJobFactory(di) }
     bindSingleton { MqttAuthenticator() }
     bindSingleton { MqttPacketHandler(di) }
     bindSingleton { MqttServer(di) }
     bindSingleton { PublishInteractor(di) }
+    bindSingleton { StdSchedulerFactory.getDefaultScheduler() }
+    bindSingleton { SunriseAlarm(di) }
+    bindSingleton { SunriseAlarm.SunriseJob(di) }
+    bindSingleton { SunsetAlarm(di) }
+    bindSingleton { SunsetAlarm.SunsetJob(di) }
 }

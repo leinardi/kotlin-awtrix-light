@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.kotlin.result)
     implementation(libs.kotlin.result.coroutines)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.quartz)
     implementation(libs.suncalc)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.kotlin.test.junit5)

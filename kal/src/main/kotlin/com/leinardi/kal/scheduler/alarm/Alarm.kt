@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.interactor
+package com.leinardi.kal.scheduler.alarm
 
-import org.shredzone.commons.suncalc.SunTimes
-import java.time.ZonedDateTime
+import org.quartz.JobDetail
+import org.quartz.Trigger
 
-class GetSunTimesInteractor {
-    operator fun invoke(time: ZonedDateTime = ZonedDateTime.now()): SunTimes = SunTimes.compute()
-        .on(time)
-        .at(MY_LOCATION)
-        .elevation(MY_ELEVATION)
-        .twilight(SunTimes.Twilight.VISUAL)
-        .fullCycle()
-        .execute()
-
-    companion object {
-        const val MY_ELEVATION: Double = 530.0
-        val MY_LOCATION: DoubleArray = doubleArrayOf(48.137154, 11.576124)
-    }
+interface Alarm {
+    val name: String
+    fun getJobDetail(): JobDetail
+    fun getTrigger(): Trigger
 }
