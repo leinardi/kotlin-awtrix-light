@@ -23,14 +23,12 @@ import com.leinardi.kal.interactor.GetSettingsInteractor
 import com.leinardi.kal.interactor.PublishInteractor
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.model.Event
-import com.leinardi.kal.model.MotionEvent
 import com.leinardi.kal.model.Notification
 import com.leinardi.kal.model.Publishable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,21 +47,7 @@ class EventHandler @Inject constructor(
         coroutineScope.launch {
             for (event in channel) {
                 when (event) {
-                    is Event.ButtonPressed -> logger.debug { "Event Received: $event" }.also {
-                        if (event.motionEvent == MotionEvent.ACTION_UP) {
-                            handleShowNotification(
-                                Notification(
-                                    text = "Happy New Year 2024!",
-                                    duration = TimeUnit.MINUTES.toSeconds(1).toInt(),
-                                    icon = "5855",
-                                    scrollSpeed = 50,
-                                    rainbow = true,
-                                    wakeup = true,
-                                ),
-                            )
-                        }
-                    }
-
+                    is Event.ButtonPressed -> logger.debug { "Event Received: $event" }
                     is Event.CurrentApp -> clientStateManager.currentApp[event.clientId] = event.app
                     is Event.DayNightChanged -> handleDayNightChanged(event)
                     is Event.EnergyProfileChanged -> handleEnergyProfileChanged(event)
