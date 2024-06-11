@@ -16,14 +16,15 @@
 
 package com.leinardi.kal.interactor
 
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
 import java.time.Duration
 import java.time.ZonedDateTime
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class IsNightInteractor(override val di: DI) : DIAware {
-    private val getSunTimesInteractor: GetSunTimesInteractor by di.instance()
+@Singleton
+class IsNightInteractor @Inject constructor(
+    private val getSunTimesInteractor: GetSunTimesInteractor,
+) {
     private var cachedResult: Pair<Boolean, ZonedDateTime>? = null
     operator fun invoke(): Boolean {
         val currentTime = ZonedDateTime.now()

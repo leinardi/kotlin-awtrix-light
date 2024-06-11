@@ -20,24 +20,36 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
 import com.github.ajalt.clikt.parameters.types.choice
+import com.leinardi.kal.di.DaggerKalComponent
 import com.leinardi.kal.ext.scheduleJob
+import com.leinardi.kal.interactor.GetConfigInteractor
 import com.leinardi.kal.log.Logger
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.mqtt.MqttServer
-import com.leinardi.kal.scheduler.KodeinJobFactory
+import com.leinardi.kal.scheduler.DaggerJobFactory
 import com.leinardi.kal.scheduler.LogSchedulerListener
-import com.leinardi.kal.scheduler.alarm.EnergySavingEndPeriodAlarm
-import com.leinardi.kal.scheduler.alarm.EnergySavingStartPeriodAlarm
-import com.leinardi.kal.scheduler.alarm.SunriseAlarm
-import com.leinardi.kal.scheduler.alarm.SunsetAlarm
+import com.leinardi.kal.scheduler.alarm.Alarm
 import io.github.oshai.kotlinlogging.Level
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
 import org.quartz.Scheduler
 import java.net.BindException
+import javax.inject.Inject
+import javax.inject.Provider
 
-class Kal(override val di: DI) : DIAware, CliktCommand() {
+class Kal : CliktCommand() {
+    @Inject lateinit var alarms: Set<@JvmSuppressWildcards Alarm>
+
+    @Inject lateinit var daggerJobFactory: DaggerJobFactory
+
+    @Inject lateinit var getConfigInteractor: GetConfigInteractor
+
+    @Inject lateinit var mqttServer: Provider<MqttServer>
+
+    @Inject lateinit var scheduler: Scheduler
+
+    init {
+        DaggerKalComponent.create().inject(this)
+    }
+
     private val logLevel: Level by option("-l", "--loglevel", help = "TBD")
         .choice(
             "TRACE" to Level.TRACE,
@@ -48,18 +60,17 @@ class Kal(override val di: DI) : DIAware, CliktCommand() {
             "OFF" to Level.OFF,
         )
         .default(Level.INFO)
-    private val scheduler: Scheduler by di.instance()
 
-    private val mqttServer: MqttServer by di.instance()
     private var running: Boolean = false
 
     override fun run() {
         Logger.setRootLoggerLevel(logLevel)
         logger.debug { "Kal run" }
+        logger.debug { "Configuration loaded: ${getConfigInteractor()}" }
         initScheduler()
         try {
             running = true
-            mqttServer.start()
+            mqttServer.get().start()
         } catch (e: BindException) {
             logger.error { e.message }
         } finally {
@@ -68,25 +79,17 @@ class Kal(override val di: DI) : DIAware, CliktCommand() {
     }
 
     private fun initScheduler() {
-        val kodeinJobFactory: KodeinJobFactory by di.instance()
-        val energySavingEndPeriodAlarm: EnergySavingEndPeriodAlarm by di.instance()
-        val energySavingStartPeriodAlarm: EnergySavingStartPeriodAlarm by di.instance()
-        val sunriseAlarm: SunriseAlarm by di.instance()
-        val sunsetAlarm: SunsetAlarm by di.instance()
         scheduler.listenerManager.addSchedulerListener(LogSchedulerListener())
-        scheduler.setJobFactory(kodeinJobFactory)
+        scheduler.setJobFactory(daggerJobFactory)
         scheduler.start()
-        scheduler.scheduleJob(energySavingStartPeriodAlarm)
-        scheduler.scheduleJob(energySavingEndPeriodAlarm)
-        scheduler.scheduleJob(sunriseAlarm)
-        scheduler.scheduleJob(sunsetAlarm)
+        alarms.forEach { scheduler.scheduleJob(it) }
     }
 
     fun onCleared() {
         logger.debug { "Kal onCleared" }
         scheduler.shutdown()
         if (running) {
-            mqttServer.stop()
+            mqttServer.get().stop()
             running = false
         }
     }

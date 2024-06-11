@@ -20,23 +20,23 @@ import kotlinx.serialization.SerialName
 
 enum class OverlayEffect {
     @SerialName("clear")
-    Clear,
+    CLEAR,
 
     @SerialName("snow")
-    Snow,
+    SNOW,
 
     @SerialName("rain")
-    Rain,
+    RAIN,
 
     @SerialName("drizzle")
-    Drizzle,
+    DRIZZLE,
 
     @SerialName("storm")
-    Storm,
+    STORM,
 
     @SerialName("thunder")
-    Thunder,
+    THUNDER,
 
     @SerialName("frost")
-    Frost,
+    FROST,
 }

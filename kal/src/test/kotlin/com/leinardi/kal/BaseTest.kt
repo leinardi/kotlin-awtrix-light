@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.interactor
+package com.leinardi.kal
 
-import com.leinardi.kal.model.EnergySavingPeriod
-import java.time.LocalTime
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.leinardi.kal.di.DaggerTestComponent
+import com.leinardi.kal.di.TestComponent
+import kotlin.test.BeforeTest
 
-@Singleton
-class GetEnergySavingPeriodInteractor @Inject constructor() {
-    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.of(0, 30), LocalTime.of(6, 0))
+abstract class BaseTest {
+    @BeforeTest
+    fun setUp() {
+        val testComponent = DaggerTestComponent.builder().build()
+        inject(testComponent)
+    }
+
+    abstract fun inject(testComponent: TestComponent)
+
+    fun readTextFileFromResources(fileName: String): String =
+        with(javaClass.classLoader.getResource(fileName)) {
+            requireNotNull(this) { "Resource not found" }
+            readText()
+        }
 }

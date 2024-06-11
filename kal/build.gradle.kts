@@ -18,6 +18,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm)
     application
     alias(libs.plugins.buildConfig)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinx.serialization)
     id("detekt-conventions")
 }
@@ -42,21 +43,22 @@ buildConfig {
         internalVisibility = true
     }
     buildConfigField("String", "VERSION", "\"${version}\"")
-    buildConfigField("Int", "MQTT_PORT", 1883)
 }
 
 dependencies {
+    implementation(libs.bundles.clikt)
     implementation(libs.bundles.kmqtt.jvm)
     implementation(libs.bundles.kotlin.logging.jvm)
-    implementation(libs.bundles.clikt)
     implementation(libs.coroutines.core)
-    implementation(libs.kodein)
+    implementation(libs.dagger)
+    implementation(libs.kaml)
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlin.result)
     implementation(libs.kotlin.result.coroutines)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.quartz)
     implementation(libs.suncalc)
+    ksp(libs.dagger.compiler)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.kotlin.test.junit5)
 }

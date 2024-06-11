@@ -16,19 +16,20 @@
 
 package com.leinardi.kal.model
 
-import com.leinardi.kal.di.build
+import com.leinardi.kal.BaseTest
+import com.leinardi.kal.di.TestComponent
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import javax.inject.Inject
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class SettingsTest : DIAware {
-    override val di = DI { build() }
+class SettingsTest : BaseTest() {
+    @Inject lateinit var json: Json
 
-    private val json: Json by di.instance()
+    override fun inject(testComponent: TestComponent) {
+        testComponent.inject(this)
+    }
 
     @Test
     fun `Test serialization and deserialization`() {
@@ -67,7 +68,7 @@ class SettingsTest : DIAware {
             batteryApp = true,
             matrixEnabled = true,
             volumeDfplayer = 9985,
-            overlay = OverlayEffect.Rain,
+            overlay = OverlayEffect.RAIN,
         )
         val jsonString = json.encodeToString(settings)
         assertEquals(settings, json.decodeFromString(jsonString))

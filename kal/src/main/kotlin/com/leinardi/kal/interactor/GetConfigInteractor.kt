@@ -16,12 +16,32 @@
 
 package com.leinardi.kal.interactor
 
-import com.leinardi.kal.model.EnergySavingPeriod
-import java.time.LocalTime
+import com.charleskorn.kaml.Yaml
+import com.leinardi.kal.model.Config
+import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GetEnergySavingPeriodInteractor @Inject constructor() {
-    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.of(0, 30), LocalTime.of(6, 0))
+class GetConfigInteractor @Inject constructor(
+    private val yaml: Yaml,
+) {
+    private val config: Config by lazy {
+        readFile(CONFIG_FILE_PATH).let {
+            if (it.isNullOrBlank()) Config() else yaml.decodeFromString(Config.serializer(), it)
+        }
+    }
+
+    operator fun invoke(): Config = config
+
+    private fun readFile(filePath: String): String? = try {
+        File(filePath).readText(Charsets.UTF_8)
+    } catch (e: IOException) {
+        null
+    }
+
+    companion object {
+        private const val CONFIG_FILE_PATH = "/etc/opt/kal/config.yaml"
+    }
 }

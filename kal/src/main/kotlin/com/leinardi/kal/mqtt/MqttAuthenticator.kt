@@ -18,9 +18,12 @@ package com.leinardi.kal.mqtt
 
 import com.leinardi.kal.ext.asString
 import mqtt.broker.interfaces.Authentication
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @OptIn(ExperimentalUnsignedTypes::class)
-class MqttAuthenticator : Authentication {
+@Singleton
+class MqttAuthenticator @Inject constructor() : Authentication {
     override fun authenticate(clientId: String, username: String?, password: UByteArray?): Boolean =
         username == "user" && password?.asString() == "pass"
 }

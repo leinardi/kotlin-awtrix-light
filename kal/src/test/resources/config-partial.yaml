@@ -1,0 +1,5 @@
+birthdayList:
+  - dateOfBirth: "1980-01-01"
+    name: "John"
+  - dateOfBirth: "1980-12-31"
+    name: "Doe"

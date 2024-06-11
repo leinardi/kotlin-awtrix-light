@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.interactor
+package com.leinardi.kal.di
 
-import com.leinardi.kal.model.EnergySavingPeriod
-import java.time.LocalTime
-import javax.inject.Inject
-import javax.inject.Singleton
+import dagger.MapKey
+import org.quartz.Job
+import kotlin.reflect.KClass
 
-@Singleton
-class GetEnergySavingPeriodInteractor @Inject constructor() {
-    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.of(0, 30), LocalTime.of(6, 0))
-}
+@Retention(AnnotationRetention.RUNTIME)
+@MapKey
+@Target(
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY_GETTER,
+    AnnotationTarget.PROPERTY_SETTER,
+)
+annotation class JobClassKey(val value: KClass<out Job>)

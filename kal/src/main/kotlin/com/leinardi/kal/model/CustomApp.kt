@@ -48,7 +48,7 @@ data class CustomApp(
     val noScroll: Boolean? = null,
     val clients: List<String>? = null,
     val scrollSpeed: Int? = null,
-    val effect: String? = null,
+    val effect: Effect? = null,
     val effectSettings: EffectSettings? = null,
     val save: Boolean? = null,
     val overlay: OverlayEffect? = null,

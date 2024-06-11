@@ -16,11 +16,12 @@
 
 package com.leinardi.kal.interactor
 
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class IsEnergySavingTimeInteractor(override val di: DI) : DIAware {
-    private val getEnergySavingPeriodInteractor: GetEnergySavingPeriodInteractor by di.instance()
+@Singleton
+class IsEnergySavingTimeInteractor @Inject constructor(
+    private val getEnergySavingPeriodInteractor: GetEnergySavingPeriodInteractor,
+) {
     operator fun invoke(): Boolean = getEnergySavingPeriodInteractor().isEnergySavingTime()
 }

@@ -20,9 +20,6 @@ import com.leinardi.kal.event.EventHandler
 import com.leinardi.kal.interactor.GetEnergySavingPeriodInteractor
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.model.Event
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
 import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
@@ -30,10 +27,11 @@ import org.quartz.JobDetail
 import org.quartz.JobExecutionContext
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
+import javax.inject.Inject
 
-class EnergySavingEndPeriodAlarm(override val di: DI) : Alarm, DIAware {
-    private val getEnergySavingPeriodInteractor: GetEnergySavingPeriodInteractor by di.instance()
-
+class EnergySavingEndPeriodAlarm @Inject constructor(
+    private val getEnergySavingPeriodInteractor: GetEnergySavingPeriodInteractor
+) : Alarm {
     override val name: String = "EnergySavingEndPeriodAlarm"
 
     override fun getJobDetail(): JobDetail =
@@ -49,10 +47,11 @@ class EnergySavingEndPeriodAlarm(override val di: DI) : Alarm, DIAware {
             .build()
     }
 
-    class EnergySavingEndPeriodJob(override val di: DI) : Job, DIAware {
+    class EnergySavingEndPeriodJob @Inject constructor(
+        private val eventHandler: EventHandler,
+    ) : Job {
         override fun execute(context: JobExecutionContext) {
             logger.debug { "EnergySavingEndPeriodJob: Sending Energy Profile changed" }
-            val eventHandler: EventHandler by di.instance()
 
             eventHandler.sendEvent(Event.EnergyProfileChanged(false))
         }

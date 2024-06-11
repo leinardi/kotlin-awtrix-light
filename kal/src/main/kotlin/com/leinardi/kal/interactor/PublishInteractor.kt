@@ -21,23 +21,25 @@ import com.leinardi.kal.model.Publishable
 import com.leinardi.kal.mqtt.MqttServer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.serializer
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
 
-class PublishInteractor(override val di: DI) : DIAware {
-    private val mqttServer: MqttServer by di.instance()
-    private val json: Json by di.instance()
+@Singleton
+class PublishInteractor @Inject constructor(
+    private val mqttServer: Provider<MqttServer>,
+    private val json: Json,
+) {
     suspend operator fun invoke(publishable: Publishable): Boolean {
         val payload = publishable.payload
         return if (payload == null) {
             logger.debug { "Publishing - topic: ${publishable.topic}" }
-            mqttServer.send(publishable.topic, null)
+            mqttServer.get().send(publishable.topic, null)
         } else {
             val serializer = json.serializersModule.serializer(payload::class.java)
             val payloadString = json.encodeToString(serializer, payload)
             logger.debug { "Publishing - topic: ${publishable.topic}, payload: $payloadString" }
-            mqttServer.send(publishable.topic, payloadString)
+            mqttServer.get().send(publishable.topic, payloadString)
         }
     }
 }

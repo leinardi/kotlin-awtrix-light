@@ -18,14 +18,14 @@ package com.leinardi.kal.interactor
 
 import com.leinardi.kal.model.Settings
 import com.leinardi.kal.ui.theme.Theme
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetSettingsInteractor(override val di: DI) : DIAware {
-    private val isEnergySavingTimeInteractor: IsEnergySavingTimeInteractor by di.instance()
-    private val isNightInteractor: IsNightInteractor by di.instance()
-
+@Singleton
+class GetSettingsInteractor @Inject constructor(
+    private val isEnergySavingTimeInteractor: IsEnergySavingTimeInteractor,
+    private val isNightInteractor: IsNightInteractor,
+) {
     operator fun invoke(): Settings = Settings()
         .applyTheme()
         .applyEnergyProfile()

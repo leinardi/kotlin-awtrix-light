@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.scheduler
+package com.leinardi.kal.model
 
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.direct
-import org.kodein.type.erased
-import org.quartz.Job
-import org.quartz.Scheduler
-import org.quartz.spi.JobFactory
-import org.quartz.spi.TriggerFiredBundle
+import kotlinx.serialization.Serializable
 
-class KodeinJobFactory(override val di: DI) : JobFactory, DIAware {
-    override fun newJob(bundle: TriggerFiredBundle, scheduler: Scheduler): Job =
-        di.direct.Instance(erased(bundle.jobDetail.jobClass.kotlin))
-}
+@Serializable
+data class Config(
+    val birthdayList: List<BirthdayData> = emptyList(),
+    val wsPort: Int? = null,
+    val mqttPort: Int = 1883,
+    val weatherApiKey: String? = null
+)

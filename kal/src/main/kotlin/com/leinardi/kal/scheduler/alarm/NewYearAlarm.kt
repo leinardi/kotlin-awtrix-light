@@ -17,49 +17,56 @@
 package com.leinardi.kal.scheduler.alarm
 
 import com.leinardi.kal.event.EventHandler
-import com.leinardi.kal.interactor.GetSunTimesInteractor
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.model.Event
+import com.leinardi.kal.model.Notification
+import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDetail
 import org.quartz.JobExecutionContext
-import org.quartz.SimpleScheduleBuilder
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
-import startAt
+import java.time.LocalDate
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class SunriseAlarm @Inject constructor(
-    private val getSunTimesInteractor: GetSunTimesInteractor
-) : Alarm {
-    override val name: String = "SunriseAlarm"
+class NewYearAlarm @Inject constructor() : Alarm {
+    override val name: String = "NewYearAlarm"
 
     override fun getJobDetail(): JobDetail =
-        JobBuilder.newJob(SunriseJob::class.java)
+        JobBuilder.newJob(NewYearJob::class.java)
             .withIdentity(name)
             .build()
 
     override fun getTrigger(): Trigger =
         TriggerBuilder.newTrigger()
             .withIdentity(name)
-            .startAt(checkNotNull(getSunTimesInteractor().rise))
-            .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+            .withSchedule(CronScheduleBuilder.cronSchedule(CRON_AT_THE_BEGINNING_OF_EVERY_YEAR))
             .build()
 
-    class SunriseJob @Inject constructor(
+    class NewYearJob @Inject constructor(
         private val eventHandler: EventHandler,
-        private val getSunTimesInteractor: GetSunTimesInteractor,
     ) : Job {
         override fun execute(context: JobExecutionContext) {
-            logger.debug { "SunriseJob: Sending DayNight changed" }
+            logger.debug { "NewYearJob: sending Happy new year notification!" }
 
-            eventHandler.sendEvent(Event.DayNightChanged(false))
-
-            context.scheduler.rescheduleJob(
-                context.trigger.key,
-                context.trigger.triggerBuilder.startAt(checkNotNull(getSunTimesInteractor().rise)).build(),
+            eventHandler.sendEvent(
+                Event.ShowNotification(
+                    Notification(
+                        text = "Happy New Year ${LocalDate.now().year}!",
+                        duration = TimeUnit.MINUTES.toSeconds(10).toInt(),
+                        icon = "5855",
+                        scrollSpeed = 50,
+                        rainbow = true,
+                        wakeup = true,
+                    ),
+                ),
             )
         }
+    }
+
+    companion object {
+        private const val CRON_AT_THE_BEGINNING_OF_EVERY_YEAR = "0 0 0 1 1 ? *"
     }
 }

@@ -18,17 +18,14 @@ package com.leinardi.kal
 
 import com.github.ajalt.clikt.core.PrintMessage
 import com.github.ajalt.clikt.parameters.options.eagerOption
-import com.leinardi.kal.di.build
 import com.leinardi.kal.log.Logger
 import io.github.oshai.kotlinlogging.Level
 import kotlinx.coroutines.runBlocking
-import org.kodein.di.DI
 
 fun main(args: Array<String>) {
     runBlocking {
         Logger.configureLog4j(Level.WARN)
-        val kodein = DI { build() }
-        Kal(kodein).run {
+        Kal().run {
             Runtime.getRuntime().addShutdownHook(Thread { onCleared() })
             eagerOption(
                 names = setOf("--version"),

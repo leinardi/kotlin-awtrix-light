@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.interactor
+package com.leinardi.kal.scheduler
 
-import com.leinardi.kal.model.EnergySavingPeriod
-import java.time.LocalTime
+import org.quartz.Job
+import org.quartz.Scheduler
+import org.quartz.spi.JobFactory
+import org.quartz.spi.TriggerFiredBundle
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Singleton
-class GetEnergySavingPeriodInteractor @Inject constructor() {
-    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.of(0, 30), LocalTime.of(6, 0))
+class DaggerJobFactory @Inject constructor(
+    private val jobProviders: Map<Class<out Job>, @JvmSuppressWildcards Provider<Job>>
+) : JobFactory {
+    override fun newJob(bundle: TriggerFiredBundle, scheduler: Scheduler): Job {
+        val jobClass = bundle.jobDetail.jobClass
+        val provider = jobProviders[jobClass] ?: error("No provider found for job class: ${jobClass.name}")
+        return provider.get()
+    }
 }

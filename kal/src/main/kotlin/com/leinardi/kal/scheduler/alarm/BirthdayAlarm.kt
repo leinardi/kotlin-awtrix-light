@@ -17,13 +17,12 @@
 package com.leinardi.kal.scheduler.alarm
 
 import com.leinardi.kal.event.EventHandler
-import com.leinardi.kal.ext.yearsSince
 import com.leinardi.kal.log.logger
+import com.leinardi.kal.model.BirthdayData
 import com.leinardi.kal.model.Event
-import com.leinardi.kal.model.Notification
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import org.quartz.CronScheduleBuilder
 import org.quartz.Job
 import org.quartz.JobBuilder
@@ -32,15 +31,20 @@ import org.quartz.JobDetail
 import org.quartz.JobExecutionContext
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
-import java.time.LocalDate
 import java.util.Locale
+import javax.inject.Inject
 
-class BirthdayAlarm(
-    override val di: DI,
-    private val birthdayData: BirthdayData
-) : Alarm, DIAware {
+class BirthdayAlarm @AssistedInject constructor(
+    @Assisted private val birthdayData: BirthdayData,
+) : Alarm {
+    @AssistedFactory
+    interface Factory {
+        fun create(
+            @Assisted birthdayData: BirthdayData,
+        ): BirthdayAlarm
+    }
 
-    override val name: String = "BirthdayAlarm"
+    override val name: String = "BirthdayAlarm${birthdayData.name}-${birthdayData.dateOfBirth}"
 
     override fun getJobDetail(): JobDetail {
         val jobDataMap = JobDataMap().apply { put("birthdayData", birthdayData) }
@@ -58,45 +62,14 @@ class BirthdayAlarm(
             .build()
     }
 
-    class BirthdayJob(override val di: DI) : Job, DIAware {
+    class BirthdayJob @Inject constructor(
+        private val eventHandler: EventHandler,
+    ) : Job {
         override fun execute(context: JobExecutionContext) {
-            val eventHandler: EventHandler by di.instance()
             val birthdayData = context.mergedJobDataMap["birthdayData"] as BirthdayData
 
             logger.debug { "BirthdayJob: Sending Birthday Event for $birthdayData" }
             eventHandler.sendEvent(Event.ShowNotification(birthdayData.toNotification()))
         }
     }
-
-    data class BirthdayData(
-        val dateOfBirth: LocalDate,
-        val name: String,
-        val duration: Int? = 60,
-        val icon: String? = "14004",  // https://developer.lametric.com/content/apps/icon_thumbs/14004
-        val message: String = "Happy ${dateOfBirth.yearsSince()} Birthday $name!",
-        val rainbow: Boolean? = true,
-        val rtttl: String? = "happybirthday:d=4,o=4,b=120:8d, 8d, e, d",
-        val wakeup: Boolean? = true,
-    ) {
-        fun toNotification() = Notification(
-            duration = duration,
-            icon = icon,
-            loopSound = false,
-            rainbow = rainbow,
-            rtttl = rtttl,
-            text = message,
-            wakeup = wakeup,
-        )
-    }
 }
-
-val birthdayList = listOf(
-    BirthdayAlarm.BirthdayData(
-        dateOfBirth = LocalDate.parse("1981-06-13"),
-        name = "Susi",
-    ),
-    BirthdayAlarm.BirthdayData(
-        dateOfBirth = LocalDate.parse("1982-12-22"),
-        name = "Roberto",
-    ),
-)

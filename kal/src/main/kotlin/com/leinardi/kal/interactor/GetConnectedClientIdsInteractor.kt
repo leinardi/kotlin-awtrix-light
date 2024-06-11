@@ -17,11 +17,13 @@
 package com.leinardi.kal.interactor
 
 import com.leinardi.kal.mqtt.MqttServer
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import javax.inject.Inject
+import javax.inject.Provider
+import javax.inject.Singleton
 
-class GetConnectedClientIdsInteractor(override val di: DI) : DIAware {
-    private val mqttServer: MqttServer by di.instance()
-    operator fun invoke(): Set<String> = mqttServer.getConnectedClientIds()
+@Singleton
+class GetConnectedClientIdsInteractor @Inject constructor(
+    private val mqttServer: Provider<MqttServer>,
+) {
+    operator fun invoke(): Set<String> = mqttServer.get().getConnectedClientIds()
 }

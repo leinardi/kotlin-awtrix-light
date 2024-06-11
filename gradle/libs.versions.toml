@@ -2,6 +2,7 @@
 # https://docs.gradle.org/current/userguide/platforms.html
 [versions]
 coroutines = "1.8.1"
+dagger = "2.51.1"
 detekt = "1.23.6"
 gradle = "8.7"
 java = "17"
@@ -15,11 +16,13 @@ log4j = "2.23.1"
 clikt = "com.github.ajalt.clikt:clikt:4.4.0"
 coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 jna-platform = "net.java.dev.jna:jna-platform:5.14.0"
+kaml = "com.charleskorn.kaml:kaml:0.60.0"
 kmqtt-broker-jvm = { module = "io.github.davidepianca98:kmqtt-broker-jvm", version.ref = "kmqtt" }
 kmqtt-common-jvm = { module = "io.github.davidepianca98:kmqtt-common-jvm", version.ref = "kmqtt" }
-kodein = "org.kodein.di:kodein-di:7.22.0"
 kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
@@ -28,12 +31,12 @@ kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotatio
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-junit5 = "org.jetbrains.kotlin:kotlin-test-junit5:1.9.10"
 kotlinx-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0"
 log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
 log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
-quartz = "org.quartz-scheduler:quartz:2.4.0-rc2"
-suncalc = "org.shredzone.commons:commons-suncalc:3.10"
+quartz = "org.quartz-scheduler:quartz:2.5.0-rc1"
+suncalc = "org.shredzone.commons:commons-suncalc:3.11"
 
 # plugins
 plugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt" }
@@ -63,3 +66,4 @@ buildConfig = "com.github.gmazzo.buildconfig:5.3.5"
 gradledoctor = "com.osacky.doctor:0.10.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = "com.google.devtools.ksp:2.0.0-1.0.22"

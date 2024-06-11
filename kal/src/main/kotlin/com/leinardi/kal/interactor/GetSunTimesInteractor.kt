@@ -18,8 +18,11 @@ package com.leinardi.kal.interactor
 
 import org.shredzone.commons.suncalc.SunTimes
 import java.time.ZonedDateTime
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetSunTimesInteractor {
+@Singleton
+class GetSunTimesInteractor @Inject constructor() {
     operator fun invoke(time: ZonedDateTime = ZonedDateTime.now()): SunTimes = SunTimes.compute()
         .on(time)
         .at(MY_LOCATION)

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.leinardi.kal.interactor
+package com.leinardi.kal.di
 
-import com.leinardi.kal.model.EnergySavingPeriod
-import java.time.LocalTime
-import javax.inject.Inject
+import com.leinardi.kal.Kal
+import dagger.Component
 import javax.inject.Singleton
 
 @Singleton
-class GetEnergySavingPeriodInteractor @Inject constructor() {
-    operator fun invoke(): EnergySavingPeriod = EnergySavingPeriod(LocalTime.of(0, 30), LocalTime.of(6, 0))
+@Component(modules = [KalModule::class, JobModule::class, AlarmModule::class])
+interface KalComponent {
+    fun inject(kal: Kal)
 }

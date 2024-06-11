@@ -20,9 +20,6 @@ import com.leinardi.kal.event.EventHandler
 import com.leinardi.kal.interactor.GetSunTimesInteractor
 import com.leinardi.kal.log.logger
 import com.leinardi.kal.model.Event
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
 import org.quartz.Job
 import org.quartz.JobBuilder
 import org.quartz.JobDetail
@@ -31,10 +28,13 @@ import org.quartz.SimpleScheduleBuilder
 import org.quartz.Trigger
 import org.quartz.TriggerBuilder
 import startAt
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SunsetAlarm(override val di: DI) : Alarm, DIAware {
-    private val getSunTimesInteractor: GetSunTimesInteractor by di.instance()
-
+@Singleton
+class SunsetAlarm @Inject constructor(
+    private val getSunTimesInteractor: GetSunTimesInteractor
+) : Alarm {
     override val name: String = "SunsetAlarm"
 
     override fun getJobDetail(): JobDetail =
@@ -49,11 +49,12 @@ class SunsetAlarm(override val di: DI) : Alarm, DIAware {
             .withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
             .build()
 
-    class SunsetJob(override val di: DI) : Job, DIAware {
+    class SunsetJob @Inject constructor(
+        private val eventHandler: EventHandler,
+        private val getSunTimesInteractor: GetSunTimesInteractor,
+    ) : Job {
         override fun execute(context: JobExecutionContext) {
             logger.warn { "SunsetJob: Sending DayNight changed" }
-            val eventHandler: EventHandler by di.instance()
-            val getSunTimesInteractor: GetSunTimesInteractor by di.instance()
 
             eventHandler.sendEvent(Event.DayNightChanged(true))
 

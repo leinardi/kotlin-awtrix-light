@@ -17,8 +17,12 @@
 package com.leinardi.kal.awtrix
 
 import com.leinardi.kal.model.Stats
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ClientStateManager {
+@Suppress("UseDataClass")
+@Singleton
+class ClientStateManager @Inject constructor() {
     val lastReceivedStats: MutableMap<String, Stats> = mutableMapOf()
     val currentApp: MutableMap<String, String> = mutableMapOf()
 }

@@ -30,14 +30,15 @@ import mqtt.packets.mqtt.MQTTDisconnect
 import mqtt.packets.mqtt.MQTTPublish
 import mqtt.packets.mqtt.MQTTSubscribe
 import mqtt.packets.mqttv4.MQTT4Pingreq
-import org.kodein.di.DI
-import org.kodein.di.DIAware
-import org.kodein.di.instance
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @OptIn(ExperimentalUnsignedTypes::class)
-class MqttPacketHandler(override val di: DI) : PacketInterceptor, DIAware {
-    private val eventHandler: EventHandler by di.instance()
-    private val json: Json by di.instance()
+@Singleton
+class MqttPacketHandler @Inject constructor(
+    private val eventHandler: EventHandler,
+    private val json: Json,
+) : PacketInterceptor {
     override fun packetReceived(
         clientId: String,
         username: String?,
