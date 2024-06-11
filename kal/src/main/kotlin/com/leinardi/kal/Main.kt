@@ -28,7 +28,7 @@ fun main(args: Array<String>) {
         Kal().run {
             Runtime.getRuntime().addShutdownHook(Thread { onCleared() })
             eagerOption(
-                names = setOf("--version"),
+                names = setOf("-v", "--version"),
                 help = "Show the version and exit",
             ) {
                 throw PrintMessage(BuildConfig.VERSION)

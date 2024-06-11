@@ -89,7 +89,7 @@ tasks {
         }
         from(files(sourceSets.main.get().output.resourcesDir))
         from(files(sourceSets.main.get().output.classesDirs))
-        from(configurations.compileClasspath.get().resolve().map { if (it.isDirectory) it else zipTree(it) })
+        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
         archiveFileName.set("${archiveBaseName.get()}-fat-$version.jar")
     }
 
