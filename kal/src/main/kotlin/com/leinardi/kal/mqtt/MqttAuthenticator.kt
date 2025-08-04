@@ -17,7 +17,7 @@
 package com.leinardi.kal.mqtt
 
 import com.leinardi.kal.ext.asString
-import mqtt.broker.interfaces.Authentication
+import io.github.davidepianca98.mqtt.broker.interfaces.Authentication
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -32,7 +32,7 @@ data class EnergySavingPeriod(val start: LocalTime, val end: LocalTime) {
 
         return when {
             currentDateTime.isBefore(startDateTime) -> startDateTime
-            (currentDateTime.isAfter(startDateTime) || currentDateTime == startDateTime) && currentDateTime.isBefore(endDateTime) -> endDateTime
+            !currentDateTime.isBefore(startDateTime) && currentDateTime.isBefore(endDateTime) -> endDateTime
             else -> startDateTime.plusDays(1)
         }
     }
@@ -46,6 +46,6 @@ data class EnergySavingPeriod(val start: LocalTime, val end: LocalTime) {
                 this
             }
         }
-        return (currentDateTime.isAfter(startDateTime) || currentDateTime == startDateTime) && currentDateTime.isBefore(endDateTime)
+        return !currentDateTime.isBefore(startDateTime) && currentDateTime.isBefore(endDateTime)
     }
 }

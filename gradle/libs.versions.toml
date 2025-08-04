@@ -1,15 +1,15 @@
 # Sharing dependency versions between projects
 # https://docs.gradle.org/current/userguide/platforms.html
 [versions]
-coroutines = "1.8.1"
-dagger = "2.51.1"
-detekt = "1.23.6"
-gradle = "8.7"
+coroutines = "1.10.2"
+dagger = "2.57"
+detekt = "1.23.8"
+gradle = "9.0.0"
 java = "17"
-kmqtt = "0.4.7"
-kotlin = "2.0.0"
-kotlin-logging = "6.0.9"
-kotlin-result = "2.0.0"
+kmqtt = "1.0.0"
+kotlin = "2.2.0"
+kotlin-logging = "7.0.11"
+kotlin-result = "2.1.0"
 log4j = "2.23.1"
 
 [libraries]
@@ -19,23 +19,23 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
-jna-platform = "net.java.dev.jna:jna-platform:5.14.0"
-kaml = "com.charleskorn.kaml:kaml:0.60.0"
+jna-platform = "net.java.dev.jna:jna-platform:5.17.0"
+kaml = "com.charleskorn.kaml:kaml:0.85.0"
 kmqtt-broker-jvm = { module = "io.github.davidepianca98:kmqtt-broker-jvm", version.ref = "kmqtt" }
 kmqtt-common-jvm = { module = "io.github.davidepianca98:kmqtt-common-jvm", version.ref = "kmqtt" }
 kotlin-logging-jvm = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
-kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-reflect = "org.jetbrains.kotlin:kotlin-reflect:2.0.0"
 kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
 kotlin-result-coroutines = { module = "com.michael-bull.kotlin-result:kotlin-result-coroutines", version.ref = "kotlin-result" }
 kotlin-test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-common", version.ref = "kotlin" }
 kotlin-test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }
 kotlin-test-junit5 = "org.jetbrains.kotlin:kotlin-test-junit5:1.9.10"
 kotlinx-cli = "org.jetbrains.kotlinx:kotlinx-cli:0.3.6"
-kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0"
+kotlinx-serialization-json = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0"
 log4j-api = { module = "org.apache.logging.log4j:log4j-api", version.ref = "log4j" }
-log4j-core = { module = "org.apache.logging.log4j:log4j-core", version.ref = "log4j" }
+log4j-core = "org.apache.logging.log4j:log4j-core:2.25.1"
 log4j-slf4j2-impl = { module = "org.apache.logging.log4j:log4j-slf4j2-impl", version.ref = "log4j" }
-quartz = "org.quartz-scheduler:quartz:2.5.0-rc1"
+quartz = "org.quartz-scheduler:quartz:2.5.0"
 suncalc = "org.shredzone.commons:commons-suncalc:3.11"
 
 # plugins
@@ -62,8 +62,8 @@ kotlin-logging-jvm = [
 ]
 
 [plugins]
-buildConfig = "com.github.gmazzo.buildconfig:5.3.5"
+buildConfig = "com.github.gmazzo.buildconfig:5.6.7"
 gradledoctor = "com.osacky.doctor:0.10.0"
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-ksp = "com.google.devtools.ksp:2.0.0-1.0.22"
+ksp = "com.google.devtools.ksp:2.2.0-2.0.2"

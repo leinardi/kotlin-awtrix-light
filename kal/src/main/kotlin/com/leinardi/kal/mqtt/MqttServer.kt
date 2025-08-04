@@ -19,9 +19,9 @@ package com.leinardi.kal.mqtt
 import com.leinardi.kal.coroutine.CoroutineDispatchers
 import com.leinardi.kal.interactor.GetConfigInteractor
 import com.leinardi.kal.log.logger
+import io.github.davidepianca98.mqtt.broker.Broker
+import io.github.davidepianca98.mqtt.packets.Qos
 import kotlinx.coroutines.withContext
-import mqtt.broker.Broker
-import mqtt.packets.Qos
 import javax.inject.Inject
 import javax.inject.Singleton
 
