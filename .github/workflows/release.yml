@@ -4,18 +4,23 @@ on:
   workflow_dispatch:
     inputs:
       semver:
-        description: 'Release Semantic Versioning (e.g. 4.15.2)'
+        description: 'Release Semantic Versioning (e.g. 1.2.3)'
         required: true
 
 jobs:
   build-release:
-    name: Build release
     runs-on: ubuntu-latest
     timeout-minutes: 60
+
+    # we push to GHCR and create a deployment, so the token needs packages & deployments
     permissions:
-      contents: write
+      contents: write       # create tag & release
+      packages: write       # push container image
+      deployments: write    # create deployment + status
+
     env:
       TERM: dumb
+      KAL_VERSION: ${{ github.event.inputs.semver }}
 
     steps:
       - name: Checkout
@@ -24,62 +29,118 @@ jobs:
       - name: Create release tag
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.rest.git.createRef({
               owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "refs/tags/${{ github.event.inputs.semver }}",
-              sha: context.sha
+              repo:  context.repo.repo,
+              ref:  `refs/tags/${process.env.KAL_VERSION}`,
+              sha:  context.sha
             })
 
-      - name: Workaround to fetch the tag # Is there a better way to do it?
+      # fetch tags so Gradle can read them if needed
+      - name: Fetch full history
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+        with: { fetch-depth: 0 }
 
-      - name: Setup JDK
+      - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: 17.0.10
+          distribution: temurin
+          java-version: 17
 
-      - name: Setup Gradle
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
       - name: Copy CI gradle.properties
-        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
+        run: |
+          mkdir -p ~/.gradle
+          cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
-      ## Actual task
-      - name: Build
-        run: ./gradlew build -PkalVersion=${{ github.event.inputs.semver }}
+      - name: Build fat-JAR
+        run: ./gradlew dist -PkalVersion=${{ env.KAL_VERSION }}
+
+      - name: Extract major version
+        id: vars
+        run: |
+          echo "major=${KAL_VERSION%%.*}" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          build-args: |
+            KAL_VERSION=${{ env.KAL_VERSION }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/kotlin-awtrix-light:${{ env.KAL_VERSION }}
+            ghcr.io/${{ github.repository_owner }}/kotlin-awtrix-light:${{ steps.vars.outputs.major }}
+            ghcr.io/${{ github.repository_owner }}/kotlin-awtrix-light:latest
+          platforms: linux/amd64,linux/arm64
 
       - name: Upload build outputs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: build-outputs
-          path: kal/build/libs/kal-fat-${{ github.event.inputs.semver }}.jar
+          name: kal-fat-${{ env.KAL_VERSION }}.jar
+          path: kal/build/libs/kal-fat-${{ env.KAL_VERSION }}.jar
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          draft: true
-          tag_name: ${{ github.event.inputs.semver }}
+          tag_name: ${{ env.KAL_VERSION }}
           fail_on_unmatched_files: true
+          generate_release_notes: true
           files: |
-            kal/build/libs/kal-fat-${{ github.event.inputs.semver }}.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            kal/build/libs/kal-fat-${{ env.KAL_VERSION }}.jar
 
-      - name: Delete release tag
+      - name: Record deployment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version  = process.env.KAL_VERSION;
+            const imageRef = `ghcr.io/${context.repo.owner}/kotlin-awtrix-light:${version}`;
+
+            // create (or reuse) a deployment
+            const deploy = await github.rest.repos.createDeployment({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              ref:   context.sha,
+              environment: 'ghcr',
+              description: `Container image ${imageRef}`,
+              required_contexts: []     // do not wait for other CIs
+            });
+
+            // mark it as successful
+            await github.rest.repos.createDeploymentStatus({
+              owner: context.repo.owner,
+              repo:  context.repo.repo,
+              deployment_id: deploy.data.id,
+              state: 'success',
+              log_url: `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              environment_url: `https://ghcr.io/${context.repo.owner}/kotlin-awtrix-light`
+            });
+
+      - name: Delete release tag on failure
         if: ${{ failure() || cancelled() }}
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.rest.git.deleteRef({
               owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: "tags/${{ github.event.inputs.semver }}"
+              repo:  context.repo.repo,
+              ref:   `tags/${process.env.KAL_VERSION}`
             })
