@@ -58,7 +58,7 @@ class MqttServer @Inject constructor(
         broker.publish(
             retain = false,
             topicName = topic,
-            qos = Qos.EXACTLY_ONCE,
+            qos = Qos.AT_LEAST_ONCE,
             properties = null,
             payload = payload?.run { toByteArray().toUByteArray() },
         )

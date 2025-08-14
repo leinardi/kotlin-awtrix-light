@@ -1,0 +1,5 @@
+rules:
+  - pattern: 'java.lang:type=Memory'
+  - pattern: 'java.lang:type=GarbageCollector,name=(.*)'
+  - pattern: 'java.nio:(.*)'
+  - pattern: 'jdk.nio:(.*)'

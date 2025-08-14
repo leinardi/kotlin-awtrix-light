@@ -26,8 +26,8 @@ import com.leinardi.kal.model.Event
 import com.leinardi.kal.model.Notification
 import com.leinardi.kal.model.Publishable
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.Channel.Factory.UNLIMITED
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,7 +41,10 @@ class EventHandler @Inject constructor(
     private val publishInteractor: PublishInteractor,
 ) {
     private val coroutineScope = CoroutineScope(coroutineDispatchers.default)
-    private val channel = Channel<Event>(UNLIMITED)
+    private val channel = Channel<Event>(
+        capacity = 1024,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
 
     init {
         coroutineScope.launch {
